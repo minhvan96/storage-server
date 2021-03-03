@@ -78,13 +78,6 @@ namespace Vnr.Storage.API.Features.DecryptData.Commands
                         }
 
                         var test = DecryptFileContent(request.File.FileName, streamedFileContent);
-                        //RijndaelManaged myRijndael = new RijndaelManaged();
-                        //var rijndaeData = await _context.RijndaelKeys.FirstOrDefaultAsync(cancellationToken);
-                        //myRijndael.Key = Convert.FromBase64String(rijndaeData.Key);
-                        //myRijndael.IV = Convert.FromBase64String(rijndaeData.IV);
-
-                        //var decryptedFileContent = RijndaelCrypto.DecryptStringFromBytes(streamedFileContent, myRijndael.Key, myRijndael.IV);
-                        //var testData = System.Text.Encoding.UTF8.GetString(encryptedFileContent);
 
                         return ResponseProvider.Ok(test);
                     }
