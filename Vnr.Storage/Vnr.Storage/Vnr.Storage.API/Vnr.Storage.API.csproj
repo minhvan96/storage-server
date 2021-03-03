@@ -1,0 +1,35 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+	<PropertyGroup>
+		<TargetFramework>net5.0</TargetFramework>
+		<UserSecretsId>436f3f46-ad04-4fa9-a49d-1b532ae6cde5</UserSecretsId>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="mediatr" Version="9.0.0" />
+		<PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="9.0.0" />
+		<PackageReference Include="Microsoft.AspNetCore.StaticFiles" Version="2.2.0" />
+		<PackageReference Include="microsoft.entityframeworkcore" Version="5.0.3" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="5.0.3">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="5.0.3" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="5.0.3">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+		<PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
+		<PackageReference Include="Swashbuckle.AspNetCore" Version="6.0.7" />
+		<PackageReference Include="Swashbuckle.AspNetCore.Newtonsoft" Version="6.0.7" />
+		<PackageReference Include="System.Security.Cryptography.Algorithms" Version="4.3.1" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Folder Include="Archive\Contract\" />
+		<Folder Include="Archive\Salary\" />
+		<Folder Include="wwwroot\StaticFiles\Documents\Word\" />
+		<Folder Include="wwwroot\StaticFiles\Documents\Pdf\" />
+		<Folder Include="wwwroot\StaticFiles\" />
+	</ItemGroup>
+</Project>

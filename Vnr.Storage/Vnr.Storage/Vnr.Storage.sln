@@ -1,0 +1,30 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31019.35
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Vnr.Storage.API", "Vnr.Storage.API\Vnr.Storage.API.csproj", "{815E099D-EF80-4F8A-8312-EBC15296FCA2}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "API", "API", "{657BF649-31B6-4946-A542-CC11B212EA45}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{815E099D-EF80-4F8A-8312-EBC15296FCA2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{815E099D-EF80-4F8A-8312-EBC15296FCA2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{815E099D-EF80-4F8A-8312-EBC15296FCA2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{815E099D-EF80-4F8A-8312-EBC15296FCA2}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{815E099D-EF80-4F8A-8312-EBC15296FCA2} = {657BF649-31B6-4946-A542-CC11B212EA45}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {2F19CD0F-329E-4336-903A-F04FE1FE0ED3}
+	EndGlobalSection
+EndGlobal
