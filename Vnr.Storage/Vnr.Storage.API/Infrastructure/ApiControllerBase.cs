@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Net.Mime;
 using System.Threading.Tasks;
 using Vnr.Storage.API.Infrastructure.BaseResponse;
+using Vnr.Storage.API.Infrastructure.Models;
 
 namespace Vnr.Storage.API.Infrastructure
 {
@@ -51,6 +52,21 @@ namespace Vnr.Storage.API.Infrastructure
             {
                 StatusCode = (int)result.StatusCode
             };
+        }
+
+        protected async Task<IActionResult> HandleRequest(IRequest<FileContentResultModel> request)
+        {
+            if (!ModelState.IsValid)
+            {
+                var errorResponse = ResponseProvider.BadRequest(ModelState);
+                return new JsonResult(errorResponse)
+                {
+                    StatusCode = (int)errorResponse.StatusCode
+                };
+            }
+
+            var result = await _mediator.Send(request);
+            return File(result.StreamData, result.ContentType, result.FileName);
         }
     }
 }

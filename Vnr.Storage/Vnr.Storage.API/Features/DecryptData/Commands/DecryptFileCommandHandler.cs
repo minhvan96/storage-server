@@ -22,7 +22,7 @@ using Vnr.Storage.API.Infrastructure.Utilities.FileHelpers;
 
 namespace Vnr.Storage.API.Features.DecryptData.Commands
 {
-    public class DecryptFileCommandHandler : IRequestHandler<DecryptFileCommand, ResponseModel>
+    public class DecryptFileCommandHandler : IRequestHandler<DecryptFileCommand, FileContentResultModel>
     {
         private readonly IHttpContextAccessor _accessor;
         private static readonly FormOptions _defaultFormOptions = new FormOptions();
@@ -41,7 +41,7 @@ namespace Vnr.Storage.API.Features.DecryptData.Commands
             _context = context;
         }
 
-        public async Task<ResponseModel> Handle(DecryptFileCommand request, CancellationToken cancellationToken)
+        public async Task<FileContentResultModel> Handle(DecryptFileCommand request, CancellationToken cancellationToken)
         {
             var errorModel = new FormFileErrorModel();
 
@@ -59,12 +59,14 @@ namespace Vnr.Storage.API.Features.DecryptData.Commands
 
                 if (hasContentDispositionHeader)
                 {
+                    var response = new FileContentResultModel();
+
                     if (!MultipartRequestHelper
                         .HasFileContentDisposition(contentDisposition))
                     {
                         errorModel.Errors.Add("File", $"The request couldn't be processed (Error 2).");
 
-                        return ResponseProvider.Ok(errorModel);
+                        return response;
                     }
                     else
                     {
@@ -74,23 +76,26 @@ namespace Vnr.Storage.API.Features.DecryptData.Commands
 
                         if (errorModel.Errors.Any())
                         {
-                            return ResponseProvider.Ok(errorModel);
+                            return response;
                         }
 
-                        var test = DecryptFileContent(request.File.FileName, streamedFileContent);
+                        var decryptedFileContent = await DecryptFileContent(streamedFileContent);
 
-                        return ResponseProvider.Ok(test);
+                        response.StreamData = FileHelpers.ByteArrayToMemoryStream(decryptedFileContent);
+                        response.ContentType = "APPLICATION/octet-stream";
+                        response.FileName = Path.GetFileNameWithoutExtension(request.File.FileName);
+
+                        return response;
                     }
                 }
 
                 section = await reader.ReadNextSectionAsync(cancellationToken);
             }
-            return ResponseProvider.Ok();
+            return new FileContentResultModel();
         }
 
-        private async Task DecryptFileContent(string fileName, byte[] content)
+        private async Task<byte[]> DecryptFileContent(byte[] content)
         {
-            fileName = Path.GetFileNameWithoutExtension(fileName);
             RijndaelManaged myRijndael = new RijndaelManaged();
 
             var rijndaeData = await _context.RijndaelKeys.FirstOrDefaultAsync();
@@ -98,7 +103,7 @@ namespace Vnr.Storage.API.Features.DecryptData.Commands
             myRijndael.IV = Convert.FromBase64String(rijndaeData.IV);
 
             var decryptedFileContent = RijndaelCrypto.DecryptStringFromBytes(content, myRijndael.Key, myRijndael.IV);
-            FileHelpers.ByteArrayToFile(fileName, decryptedFileContent);
+            return decryptedFileContent;
         }
     }
 }
