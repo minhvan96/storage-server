@@ -8,9 +8,9 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Vnr.Storage.API.Configuration;
 using Vnr.Storage.API.Features.BufferedFileUploadPhysical.Helpers;
 using Vnr.Storage.API.Infrastructure.BaseResponse;
-using Vnr.Storage.API.Infrastructure.Configuration;
 using Vnr.Storage.API.Infrastructure.Models;
 using Vnr.Storage.API.Infrastructure.Utilities.FileHelpers;
 

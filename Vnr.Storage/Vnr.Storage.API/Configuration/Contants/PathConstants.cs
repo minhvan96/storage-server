@@ -1,4 +1,4 @@
-﻿namespace Vnr.Storage.API.Infrastructure.Contants
+﻿namespace Vnr.Storage.API.Configuration.Contants
 {
     public static class PathConstants
     {

@@ -1,4 +1,4 @@
-﻿namespace Vnr.Storage.API.Infrastructure.Configuration
+﻿namespace Vnr.Storage.API.Configuration
 {
     public class EncryptedFileExtensionsConfiguration
     {
