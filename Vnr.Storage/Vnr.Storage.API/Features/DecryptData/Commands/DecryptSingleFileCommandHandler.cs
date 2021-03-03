@@ -13,7 +13,6 @@ using System.Security.Cryptography;
 using System.Threading;
 using System.Threading.Tasks;
 using Vnr.Storage.API.Configuration;
-using Vnr.Storage.API.Infrastructure.BaseResponse;
 using Vnr.Storage.API.Infrastructure.Crypto;
 using Vnr.Storage.API.Infrastructure.Data;
 using Vnr.Storage.API.Infrastructure.Models;
