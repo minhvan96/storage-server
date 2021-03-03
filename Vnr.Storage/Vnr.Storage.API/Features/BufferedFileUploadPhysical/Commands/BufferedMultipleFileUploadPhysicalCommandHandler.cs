@@ -19,12 +19,16 @@ namespace Vnr.Storage.API.Features.BufferedFileUploadPhysical.Commands
     public class BufferedMultipleFileUploadPhysicalCommandHandler : IRequestHandler<BufferedMultipleFileUploadPhysicalCommand, ResponseModel>
     {
         private readonly long _defaultFileSizeLimit;
-        private readonly string[] _permittedExtensions = { ".txt", ".pdf", ".docx" };
+        private readonly string[] _permittedExtensions;
         private readonly string _contentRootPath;
 
         public BufferedMultipleFileUploadPhysicalCommandHandler(IConfiguration configuration, IWebHostEnvironment env)
         {
             var fileSizeLimitConfiguration = configuration.GetSection(nameof(FileSizeLimitConfiguration)).Get<FileSizeLimitConfiguration>();
+            var bufferedFileUploadPhysicalPermittedExtensionsConfiguration = configuration
+                .GetSection(nameof(BufferedFileUploadPhysicalPermittedExtensionsConfiguration))
+                .Get<BufferedFileUploadPhysicalPermittedExtensionsConfiguration>();
+            _permittedExtensions = bufferedFileUploadPhysicalPermittedExtensionsConfiguration.MultipleFileUploadPermittedExtensions;
             _defaultFileSizeLimit = fileSizeLimitConfiguration.DefaultFileSizeLimit;
             _contentRootPath = env.ContentRootPath;
         }
