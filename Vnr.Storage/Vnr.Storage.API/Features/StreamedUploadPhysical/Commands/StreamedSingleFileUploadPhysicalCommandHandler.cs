@@ -27,17 +27,21 @@ namespace Vnr.Storage.API.Features.StreamedUploadPhysical.Commands
     {
         private readonly IHttpContextAccessor _accessor;
         private readonly long _streamFileLimitSize;
-        private readonly string[] _permittedExtensions = { ".txt", ".pdf", ".docx", "msi" };
+        private readonly string[] _permittedExtensions;
         private readonly string _contentRootPath;
         private static readonly FormOptions _defaultFormOptions = new FormOptions();
         private readonly StorageContext _context;
 
         public StreamedSingleFileUploadPhysicalCommandHandler(IConfiguration configuration, IWebHostEnvironment env, IHttpContextAccessor accessor, StorageContext context)
         {
-            _accessor = accessor;
             var fileSizeLimitConfiguration = configuration.GetSection(nameof(FileSizeLimitConfiguration)).Get<FileSizeLimitConfiguration>();
             _streamFileLimitSize = fileSizeLimitConfiguration.StreamFileSizeLimit;
+            var streamedFileUploadPhysicalPermittedExtensionsConfiguration = configuration
+               .GetSection(nameof(StreamedFileUploadPhysicalPermittedExtensionsConfiguration))
+               .Get<StreamedFileUploadPhysicalPermittedExtensionsConfiguration>();
+            _permittedExtensions = streamedFileUploadPhysicalPermittedExtensionsConfiguration.SingleFileUploadPermittedExtensions;
             _contentRootPath = env.ContentRootPath;
+            _accessor = accessor;
             _context = context;
         }
 
