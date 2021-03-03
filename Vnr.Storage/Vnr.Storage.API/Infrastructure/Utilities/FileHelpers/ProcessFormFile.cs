@@ -27,13 +27,10 @@ namespace Vnr.Storage.API.Infrastructure.Utilities.FileHelpers
                     formFile.Name.Substring(formFile.Name.IndexOf(".",
                     StringComparison.Ordinal) + 1));
 
-            if (property != null)
-            {
-                if (property.GetCustomAttribute(typeof(DisplayAttribute)) is
+            if (property != null && property.GetCustomAttribute(typeof(DisplayAttribute)) is
                     DisplayAttribute displayAttribute)
-                {
-                    fieldDisplayName = $"{displayAttribute.Name} ";
-                }
+            {
+                fieldDisplayName = $"{displayAttribute.Name} ";
             }
 
             // Don't trust the file name sent by the client. To display

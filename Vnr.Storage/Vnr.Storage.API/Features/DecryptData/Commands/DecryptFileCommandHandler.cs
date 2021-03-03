@@ -26,7 +26,7 @@ namespace Vnr.Storage.API.Features.DecryptData.Commands
     {
         private readonly IHttpContextAccessor _accessor;
         private static readonly FormOptions _defaultFormOptions = new FormOptions();
-        private readonly string[] _permittedExtensions = { ".vnresource" };
+        private readonly string[] _permittedExtensions;
         private readonly StorageContext _context;
         private readonly long _streamFileLimitSize;
 
@@ -34,6 +34,9 @@ namespace Vnr.Storage.API.Features.DecryptData.Commands
         {
             var fileSizeLimitConfiguration = configuration.GetSection(nameof(FileSizeLimitConfiguration)).Get<FileSizeLimitConfiguration>();
             _streamFileLimitSize = fileSizeLimitConfiguration.StreamFileSizeLimit;
+
+            var encryptedFileExtensionsConfiguration = configuration.GetSection(nameof(EncryptedFileExtensionsConfiguration)).Get<EncryptedFileExtensionsConfiguration>();
+            _permittedExtensions = encryptedFileExtensionsConfiguration.EncryptedFileExtensions;
             _accessor = accessor;
             _context = context;
         }
