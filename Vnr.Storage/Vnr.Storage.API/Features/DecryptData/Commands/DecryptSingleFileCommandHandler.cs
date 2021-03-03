@@ -13,6 +13,7 @@ using System.Security.Cryptography;
 using System.Threading;
 using System.Threading.Tasks;
 using Vnr.Storage.API.Configuration;
+using Vnr.Storage.API.Configuration.Contants;
 using Vnr.Storage.API.Infrastructure.Crypto;
 using Vnr.Storage.API.Infrastructure.Data;
 using Vnr.Storage.API.Infrastructure.Models;
@@ -21,7 +22,7 @@ using Vnr.Storage.API.Infrastructure.Utilities.FileHelpers;
 
 namespace Vnr.Storage.API.Features.DecryptData.Commands
 {
-    public class DecryptFileCommandHandler : IRequestHandler<DecryptFileCommand, FileContentResultModel>
+    public class DecryptSingleFileCommandHandler : IRequestHandler<DecryptSingleFileCommand, FileContentResultModel>
     {
         private readonly IHttpContextAccessor _accessor;
         private static readonly FormOptions _defaultFormOptions = new FormOptions();
@@ -29,7 +30,7 @@ namespace Vnr.Storage.API.Features.DecryptData.Commands
         private readonly StorageContext _context;
         private readonly long _streamFileLimitSize;
 
-        public DecryptFileCommandHandler(IConfiguration configuration, IWebHostEnvironment env, IHttpContextAccessor accessor, StorageContext context)
+        public DecryptSingleFileCommandHandler(IConfiguration configuration, IWebHostEnvironment env, IHttpContextAccessor accessor, StorageContext context)
         {
             var fileSizeLimitConfiguration = configuration.GetSection(nameof(FileSizeLimitConfiguration)).Get<FileSizeLimitConfiguration>();
             _streamFileLimitSize = fileSizeLimitConfiguration.StreamFileSizeLimit;
@@ -40,7 +41,7 @@ namespace Vnr.Storage.API.Features.DecryptData.Commands
             _context = context;
         }
 
-        public async Task<FileContentResultModel> Handle(DecryptFileCommand request, CancellationToken cancellationToken)
+        public async Task<FileContentResultModel> Handle(DecryptSingleFileCommand request, CancellationToken cancellationToken)
         {
             var errorModel = new FormFileErrorModel();
 
@@ -81,7 +82,7 @@ namespace Vnr.Storage.API.Features.DecryptData.Commands
                         var decryptedFileContent = await DecryptFileContent(streamedFileContent);
 
                         response.StreamData = FileHelpers.ByteArrayToMemoryStream(decryptedFileContent);
-                        response.ContentType = "APPLICATION/octet-stream";
+                        response.ContentType = FileConstants.DefaultContentType;
                         response.FileName = Path.GetFileNameWithoutExtension(request.File.FileName);
 
                         return response;
