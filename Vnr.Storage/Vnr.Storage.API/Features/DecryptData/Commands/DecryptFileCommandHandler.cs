@@ -7,12 +7,10 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Net.Http.Headers;
 using System;
-using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Threading;
 using System.Threading.Tasks;
-using Vnr.Storage.API.Features.BufferedFileUploadPhysical.Helpers;
 using Vnr.Storage.API.Infrastructure.BaseResponse;
 using Vnr.Storage.API.Infrastructure.Configuration;
 using Vnr.Storage.API.Infrastructure.Crypto;
@@ -26,7 +24,7 @@ namespace Vnr.Storage.API.Features.DecryptData.Commands
     {
         private readonly IHttpContextAccessor _accessor;
         private static readonly FormOptions _defaultFormOptions = new FormOptions();
-        private readonly string[] _permittedExtensions = { ".txt", ".pdf", ".docx", "msi" };
+        private readonly string[] _permittedExtensions = { ".vnresource" };
         private readonly StorageContext _context;
         private FormFileErrorModel _errorModel;
         private readonly long _streamFileLimitSize;
