@@ -53,7 +53,7 @@ namespace Vnr.Storage.API.Infrastructure.Utilities.FileHelpers
                 errorModel.Errors.Add(formFile.Name, $"{fieldDisplayName}({trustedFileNameForDisplay}) exceeds " +
                     $"{megabyteSizeLimit:N1} MB.");
 
-                return new byte[0];
+                return Array.Empty<byte>();
             }
 
             try
@@ -91,7 +91,7 @@ namespace Vnr.Storage.API.Infrastructure.Utilities.FileHelpers
                 // Log the exception
             }
 
-            return new byte[0];
+            return Array.Empty<byte>();
         }
 
         private static bool IsValidFileExtensionAndSignature(string fileName, Stream data, string[] permittedExtensions)
