@@ -32,4 +32,8 @@
 		<Folder Include="wwwroot\StaticFiles\Documents\Pdf\" />
 		<Folder Include="wwwroot\StaticFiles\" />
 	</ItemGroup>
+
+	<ItemGroup>
+		<None Include="..\.editorconfig" Link=".editorconfig" />
+	</ItemGroup>
 </Project>

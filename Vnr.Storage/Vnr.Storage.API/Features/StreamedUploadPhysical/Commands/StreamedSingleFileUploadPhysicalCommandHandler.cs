@@ -19,6 +19,7 @@ using Vnr.Storage.API.Infrastructure.Crypto;
 using Vnr.Storage.API.Infrastructure.Data;
 using Vnr.Storage.API.Infrastructure.Models;
 using Vnr.Storage.API.Infrastructure.Utilities;
+using Vnr.Storage.API.Infrastructure.Utilities.FileHelpers;
 
 namespace Vnr.Storage.API.Features.StreamedUploadPhysical.Commands
 {
@@ -28,7 +29,6 @@ namespace Vnr.Storage.API.Features.StreamedUploadPhysical.Commands
         private readonly long _streamFileLimitSize;
         private readonly string[] _permittedExtensions = { ".txt", ".pdf", ".docx", "msi" };
         private readonly string _contentRootPath;
-        private FormFileErrorModel _errorModel;
         private static readonly FormOptions _defaultFormOptions = new FormOptions();
         private readonly StorageContext _context;
 
@@ -38,19 +38,20 @@ namespace Vnr.Storage.API.Features.StreamedUploadPhysical.Commands
             var fileSizeLimitConfiguration = configuration.GetSection(nameof(FileSizeLimitConfiguration)).Get<FileSizeLimitConfiguration>();
             _streamFileLimitSize = fileSizeLimitConfiguration.StreamFileSizeLimit;
             _contentRootPath = env.ContentRootPath;
-            _errorModel = new FormFileErrorModel();
             _context = context;
         }
 
         public async Task<ResponseModel> Handle(StreamedSingleFileUploadPhysicalCommand request, CancellationToken cancellationToken)
         {
+            var errorModel = new FormFileErrorModel();
+
             if (!MultipartRequestHelper.IsMultipartContentType(_accessor.HttpContext.Request.ContentType))
             {
-                _errorModel.Errors.Add("File",
+                errorModel.Errors.Add("File",
                     $"The request couldn't be processed (Error 1).");
                 // Log error
 
-                return ResponseProvider.Ok(_errorModel);
+                return ResponseProvider.Ok(errorModel);
             }
             var boundary = MultipartRequestHelper.GetBoundary(
                             MediaTypeHeaderValue.Parse(_accessor.HttpContext.Request.ContentType),
@@ -69,19 +70,19 @@ namespace Vnr.Storage.API.Features.StreamedUploadPhysical.Commands
                     if (!MultipartRequestHelper
                         .HasFileContentDisposition(contentDisposition))
                     {
-                        _errorModel.Errors.Add("File", $"The request couldn't be processed (Error 2).");
+                        errorModel.Errors.Add("File", $"The request couldn't be processed (Error 2).");
 
-                        return ResponseProvider.Ok(_errorModel);
+                        return ResponseProvider.Ok(errorModel);
                     }
                     else
                     {
                         var streamedFileContent = await FileHelpers.ProcessStreamedFile(
-                            section, contentDisposition, _errorModel,
+                            section, contentDisposition, errorModel,
                             _permittedExtensions, _streamFileLimitSize, Infrastructure.Enums.ValidateExtension.Encrypt);
 
-                        if (_errorModel.Errors.Any())
+                        if (errorModel.Errors.Any())
                         {
-                            return ResponseProvider.Ok(_errorModel);
+                            return ResponseProvider.Ok(errorModel);
                         }
 
                         RijndaelManaged myRijndael = new RijndaelManaged();

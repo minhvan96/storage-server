@@ -17,6 +17,7 @@ using Vnr.Storage.API.Infrastructure.Crypto;
 using Vnr.Storage.API.Infrastructure.Data;
 using Vnr.Storage.API.Infrastructure.Models;
 using Vnr.Storage.API.Infrastructure.Utilities;
+using Vnr.Storage.API.Infrastructure.Utilities.FileHelpers;
 
 namespace Vnr.Storage.API.Features.DecryptData.Commands
 {
@@ -26,7 +27,6 @@ namespace Vnr.Storage.API.Features.DecryptData.Commands
         private static readonly FormOptions _defaultFormOptions = new FormOptions();
         private readonly string[] _permittedExtensions = { ".vnresource" };
         private readonly StorageContext _context;
-        private FormFileErrorModel _errorModel;
         private readonly long _streamFileLimitSize;
 
         public DecryptFileCommandHandler(IConfiguration configuration, IWebHostEnvironment env, IHttpContextAccessor accessor, StorageContext context)
@@ -35,19 +35,12 @@ namespace Vnr.Storage.API.Features.DecryptData.Commands
             _streamFileLimitSize = fileSizeLimitConfiguration.StreamFileSizeLimit;
             _accessor = accessor;
             _context = context;
-            _errorModel = new FormFileErrorModel();
         }
 
         public async Task<ResponseModel> Handle(DecryptFileCommand request, CancellationToken cancellationToken)
         {
-            if (!MultipartRequestHelper.IsMultipartContentType(_accessor.HttpContext.Request.ContentType))
-            {
-                _errorModel.Errors.Add("File",
-                    $"The request couldn't be processed (Error 1).");
-                // Log error
+            var errorModel = new FormFileErrorModel();
 
-                return ResponseProvider.Ok(_errorModel);
-            }
             var boundary = MultipartRequestHelper.GetBoundary(
                             MediaTypeHeaderValue.Parse(_accessor.HttpContext.Request.ContentType),
                             _defaultFormOptions.MultipartBoundaryLengthLimit);
@@ -65,23 +58,23 @@ namespace Vnr.Storage.API.Features.DecryptData.Commands
                     if (!MultipartRequestHelper
                         .HasFileContentDisposition(contentDisposition))
                     {
-                        _errorModel.Errors.Add("File", $"The request couldn't be processed (Error 2).");
+                        errorModel.Errors.Add("File", $"The request couldn't be processed (Error 2).");
 
-                        return ResponseProvider.Ok(_errorModel);
+                        return ResponseProvider.Ok(errorModel);
                     }
                     else
                     {
                         var streamedFileContent = await FileHelpers.ProcessStreamedFile(
-                            section, contentDisposition, _errorModel,
+                            section, contentDisposition, errorModel,
                             _permittedExtensions, _streamFileLimitSize, Infrastructure.Enums.ValidateExtension.Decrypt);
 
-                        if (_errorModel.Errors.Any())
+                        if (errorModel.Errors.Any())
                         {
-                            return ResponseProvider.Ok(_errorModel);
+                            return ResponseProvider.Ok(errorModel);
                         }
 
                         RijndaelManaged myRijndael = new RijndaelManaged();
-                        var rijndaeData = await _context.RijndaelKeys.FirstOrDefaultAsync();
+                        var rijndaeData = await _context.RijndaelKeys.FirstOrDefaultAsync(cancellationToken);
                         myRijndael.Key = Convert.FromBase64String(rijndaeData.Key);
                         myRijndael.IV = Convert.FromBase64String(rijndaeData.IV);
 
@@ -95,6 +88,17 @@ namespace Vnr.Storage.API.Features.DecryptData.Commands
                 section = await reader.ReadNextSectionAsync(cancellationToken);
             }
             return ResponseProvider.Ok();
+        }
+
+        public async Task DecryptFileContent(byte[] content)
+        {
+            RijndaelManaged myRijndael = new RijndaelManaged();
+
+            var rijndaeData = await _context.RijndaelKeys.FirstOrDefaultAsync();
+            myRijndael.Key = Convert.FromBase64String(rijndaeData.Key);
+            myRijndael.IV = Convert.FromBase64String(rijndaeData.IV);
+
+            var decryptedFileContent = RijndaelCrypto.DecryptStringFromBytes(content, myRijndael.Key, myRijndael.IV);
         }
     }
 }
