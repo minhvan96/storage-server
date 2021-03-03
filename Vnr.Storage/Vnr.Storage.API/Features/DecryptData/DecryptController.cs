@@ -15,7 +15,7 @@ namespace Vnr.Storage.API.Features.DecryptData
         }
 
         [HttpPost]
-        public Task<IActionResult> DecryptFile(DecryptFileCommand command)
+        public Task<IActionResult> DecryptFile(DecryptSingleFileCommand command)
             => HandleRequest(command);
     }
 }
