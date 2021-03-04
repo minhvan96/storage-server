@@ -4,6 +4,7 @@ using System.Net.Mime;
 using System.Threading.Tasks;
 using Vnr.Storage.API.Infrastructure.BaseResponse;
 using Vnr.Storage.API.Infrastructure.Models;
+using Vnr.Storage.API.Infrastructure.Utilities.FileHelpers;
 
 namespace Vnr.Storage.API.Infrastructure
 {
@@ -66,7 +67,8 @@ namespace Vnr.Storage.API.Infrastructure
             }
 
             var result = await _mediator.Send(request);
-            return File(result.StreamData, result.ContentType, result.FileName);
+            var contentType = FileHelpers.GetMIMEType(result.FileName);
+            return File(result.StreamData, contentType, result.FileName);
         }
     }
 }

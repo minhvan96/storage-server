@@ -82,7 +82,6 @@ namespace Vnr.Storage.API.Features.DecryptData.Commands
                         var decryptedFileContent = await DecryptFileContent(streamedFileContent);
 
                         response.StreamData = FileHelpers.ByteArrayToMemoryStream(decryptedFileContent);
-                        response.ContentType = FileConstants.DefaultContentType;
                         response.FileName = Path.GetFileNameWithoutExtension(request.File.FileName);
 
                         return response;
