@@ -17,6 +17,6 @@ namespace Vnr.Storage.API.Infrastructure.Data
         }
 
         public DbSet<RijndaelKey> RijndaelKeys { get; set; }
-        public DbSet<FilePath> FilePaths { get; set; }
+        public DbSet<EncryptedFile> EncryptedFiles { get; set; }
     }
 }
