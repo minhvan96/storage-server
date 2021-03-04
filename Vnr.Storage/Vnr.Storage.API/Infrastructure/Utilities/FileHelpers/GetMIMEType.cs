@@ -7,11 +7,8 @@ namespace Vnr.Storage.API.Infrastructure.Utilities.FileHelpers
         public static string GetMIMEType(string fileName)
         {
             var provider = new FileExtensionContentTypeProvider();
-            string contentType;
-            if (!provider.TryGetContentType(fileName, out contentType))
-            {
+            if (!provider.TryGetContentType(fileName, out string contentType))
                 contentType = "application/octet-stream";
-            }
             return contentType;
         }
     }

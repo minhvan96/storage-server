@@ -1,15 +1,11 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Http.Features;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.IO;
-using System.Linq;
 using System.Security.Cryptography;
 using System.Threading;
 using System.Threading.Tasks;
-using Vnr.Storage.API.Configuration.Contants;
 using Vnr.Storage.API.Infrastructure.Crypto.RijndaelCrypto;
 using Vnr.Storage.API.Infrastructure.Data;
 using Vnr.Storage.API.Infrastructure.Models;
@@ -19,14 +15,11 @@ namespace Vnr.Storage.API.Features.DecryptData.Queries
 {
     public class DecryptSingleFileByIdQueryHandler : IRequestHandler<DecryptSingleFileByIdQuery, FileContentResultModel>
     {
-        private readonly IHttpContextAccessor _accessor;
-        private static readonly FormOptions _defaultFormOptions = new FormOptions();
         private readonly StorageContext _context;
         private readonly string _contentRootPath;
 
-        public DecryptSingleFileByIdQueryHandler(IWebHostEnvironment env, IHttpContextAccessor accessor, StorageContext context)
+        public DecryptSingleFileByIdQueryHandler(IWebHostEnvironment env, StorageContext context)
         {
-            _accessor = accessor;
             _context = context;
             _contentRootPath = env.ContentRootPath;
         }

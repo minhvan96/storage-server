@@ -27,16 +27,12 @@ namespace Vnr.Storage.API.Infrastructure.Utilities.FileHelpers
                     formFile.Name.Substring(formFile.Name.IndexOf(".",
                     StringComparison.Ordinal) + 1));
 
-            if (property != null && property.GetCustomAttribute(typeof(DisplayAttribute)) is
-                    DisplayAttribute displayAttribute)
-            {
+            if (property != null && property.GetCustomAttribute(typeof(DisplayAttribute)) is DisplayAttribute displayAttribute)
                 fieldDisplayName = $"{displayAttribute.Name} ";
-            }
 
             // Don't trust the file name sent by the client. To display
             // the file name, HTML-encode the value.
-            var trustedFileNameForDisplay = WebUtility.HtmlEncode(
-                formFile.FileName);
+            var trustedFileNameForDisplay = WebUtility.HtmlEncode(formFile.FileName);
 
             // Check the file length. This check doesn't catch files that only have
             // a BOM as their content.
@@ -44,7 +40,7 @@ namespace Vnr.Storage.API.Infrastructure.Utilities.FileHelpers
             {
                 errorModel.Errors.Add(formFile.Name, $"{fieldDisplayName}({trustedFileNameForDisplay}) is empty.");
 
-                return new byte[0];
+                return Array.Empty<byte>();
             }
 
             if (formFile.Length > sizeLimit)
@@ -66,29 +62,20 @@ namespace Vnr.Storage.API.Infrastructure.Utilities.FileHelpers
                     // content was a BOM and the content is actually
                     // empty after removing the BOM.
                     if (memoryStream.Length == 0)
-                    {
                         errorModel.Errors.Add(formFile.Name, $"{fieldDisplayName}({trustedFileNameForDisplay}) is empty.");
-                    }
 
-                    if (!IsValidFileExtensionAndSignature(
-                        formFile.FileName, memoryStream, permittedExtensions))
-                    {
+                    if (!IsValidFileExtensionAndSignature(formFile.FileName, memoryStream, permittedExtensions))
                         errorModel.Errors.Add(formFile.Name, $"{fieldDisplayName}({trustedFileNameForDisplay}) file " +
                             "type isn't permitted or the file's signature " +
                             "doesn't match the file's extension.");
-                    }
                     else
-                    {
                         return memoryStream.ToArray();
-                    }
                 }
             }
             catch (Exception ex)
             {
                 errorModel.Errors.Add(formFile.Name, $"{fieldDisplayName}({trustedFileNameForDisplay}) upload failed. " +
                     $"Please contact the Help Desk for support. Error: {ex.HResult}");
-
-                // Log the exception
             }
 
             return Array.Empty<byte>();
@@ -97,16 +84,12 @@ namespace Vnr.Storage.API.Infrastructure.Utilities.FileHelpers
         private static bool IsValidFileExtensionAndSignature(string fileName, Stream data, string[] permittedExtensions)
         {
             if (string.IsNullOrEmpty(fileName) || data == null || data.Length == 0)
-            {
                 return false;
-            }
 
             var ext = Path.GetExtension(fileName).ToLowerInvariant();
 
             if (string.IsNullOrEmpty(ext) || !permittedExtensions.Contains(ext))
-            {
                 return false;
-            }
 
             data.Position = 0;
 
@@ -118,12 +101,8 @@ namespace Vnr.Storage.API.Infrastructure.Utilities.FileHelpers
                     {
                         // Limits characters to ASCII encoding.
                         for (var i = 0; i < data.Length; i++)
-                        {
                             if (reader.ReadByte() > sbyte.MaxValue)
-                            {
                                 return false;
-                            }
-                        }
                     }
                     else
                     {
@@ -132,29 +111,13 @@ namespace Vnr.Storage.API.Infrastructure.Utilities.FileHelpers
                         for (var i = 0; i < data.Length; i++)
                         {
                             var b = reader.ReadByte();
-                            if (b > sbyte.MaxValue ||
-                                !_allowedChars.Contains(b))
-                            {
+                            if (b > sbyte.MaxValue || !_allowedChars.Contains(b))
                                 return false;
-                            }
                         }
                     }
 
                     return true;
                 }
-
-                // Uncomment the following code block if you must permit
-                // files whose signature isn't provided in the _fileSignature
-                // dictionary. We recommend that you add file signatures
-                // for files (when possible) for all file types you intend
-                // to allow on the system and perform the file signature
-                // check.
-                /*
-                if (!_fileSignature.ContainsKey(ext))
-                {
-                    return true;
-                }
-                */
 
                 // File signature check
                 // --------------------

@@ -23,9 +23,7 @@ namespace Vnr.Storage.API.Infrastructure.Utilities.FileHelpers
 
                     // Check if the file is empty or exceeds the size limit.
                     if (memoryStream.Length == 0)
-                    {
                         errorModel.Errors.Add("File", "The file is empty.");
-                    }
                     else if (memoryStream.Length > sizeLimit)
                     {
                         var megabyteSizeLimit = sizeLimit / 1048576;
@@ -34,21 +32,15 @@ namespace Vnr.Storage.API.Infrastructure.Utilities.FileHelpers
                     else if (purpose == ValidateExtension.Encrypt && !IsValidFileExtensionAndSignature(
                         contentDisposition.FileName.Value, memoryStream,
                         permittedExtensions))
-                    {
                         errorModel.Errors.Add("File", "The file type isn't permitted or the file's " +
                             "signature doesn't match the file's extension.");
-                    }
                     else if (purpose == ValidateExtension.Decrypt && !IsValidFileExtensionForDecrypt(
                         contentDisposition.FileName.Value, memoryStream,
                         permittedExtensions))
-                    {
                         errorModel.Errors.Add("File", "The file type isn't permitted or the file's " +
                             "signature doesn't match the file's extension.");
-                    }
                     else
-                    {
                         return memoryStream.ToArray();
-                    }
                 }
             }
             catch (Exception ex)
@@ -56,24 +48,19 @@ namespace Vnr.Storage.API.Infrastructure.Utilities.FileHelpers
                 errorModel.Errors.Add("File",
                     "The upload failed. Please contact the Help Desk " +
                     $" for support. Error: {ex.HResult}");
-                // Log the exception
             }
 
-            return new byte[0];
+            return Array.Empty<byte>();
         }
 
         private static bool IsValidFileExtensionForDecrypt(string fileName, Stream data, string[] permittedDecryptExtension)
         {
             if (string.IsNullOrEmpty(fileName) || data == null || data.Length == 0)
-            {
                 return false;
-            }
             var ext = Path.GetExtension(fileName).ToLowerInvariant();
 
             if (string.IsNullOrEmpty(ext) || !permittedDecryptExtension.Contains(ext))
-            {
                 return false;
-            }
             return true;
         }
     }
