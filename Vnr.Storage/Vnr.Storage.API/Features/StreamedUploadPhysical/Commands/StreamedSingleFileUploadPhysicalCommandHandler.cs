@@ -98,6 +98,8 @@ namespace Vnr.Storage.API.Features.StreamedUploadPhysical.Commands
                         {
                             await fileStream.WriteAsync(encryptedFileContent, cancellationToken);
                         }
+
+                        await UploadFilePathToDatabase(request.File.FileName, finalFilePath);
                     }
                 }
 
@@ -116,11 +118,15 @@ namespace Vnr.Storage.API.Features.StreamedUploadPhysical.Commands
             return RijndaelCrypto.EncryptDataToBytes(streamedFileContent, myRijndael.Key, myRijndael.IV);
         }
 
-        public void UploadFilePathToDatabase(string fileName, string fullPath)
+        public async Task UploadFilePathToDatabase(string fileName, string fullPath)
         {
-            //var encryptedFilePath = new EncryptedFile
-            //{
-            //}
+            var encryptedFile = new EncryptedFile
+            {
+                FileName = fileName,
+                FullPath = fullPath
+            };
+            await _context.AddAsync(encryptedFile);
+            await _context.SaveChangesAsync();
         }
     }
 }
