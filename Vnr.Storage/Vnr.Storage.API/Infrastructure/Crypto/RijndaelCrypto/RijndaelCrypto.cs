@@ -1,9 +1,8 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 using System.Security.Cryptography;
 using Vnr.Storage.API.Infrastructure.Utilities;
 
-namespace Vnr.Storage.API.Infrastructure.Crypto
+namespace Vnr.Storage.API.Infrastructure.Crypto.RijndaelCrypto
 {
     public static class RijndaelCrypto
     {

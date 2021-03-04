@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Vnr.Storage.API.Infrastructure.Crypto
+namespace Vnr.Storage.API.Infrastructure.Crypto.RijndaelCrypto
 {
     public static class RijndaelHelper
     {

@@ -14,7 +14,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Vnr.Storage.API.Configuration;
 using Vnr.Storage.API.Configuration.Contants;
-using Vnr.Storage.API.Infrastructure.Crypto;
+using Vnr.Storage.API.Infrastructure.Crypto.RijndaelCrypto;
 using Vnr.Storage.API.Infrastructure.Data;
 using Vnr.Storage.API.Infrastructure.Models;
 using Vnr.Storage.API.Infrastructure.Utilities;
