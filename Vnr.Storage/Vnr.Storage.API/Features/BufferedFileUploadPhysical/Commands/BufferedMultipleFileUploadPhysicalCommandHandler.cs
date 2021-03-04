@@ -53,7 +53,7 @@ namespace Vnr.Storage.API.Features.BufferedFileUploadPhysical.Commands
                 // server-side, use Path.GetRandomFileName to generate a safe
                 // random file name.
 
-                var filePath = UploadFileHelper.UploadFileLocation(_contentRootPath, formFile.FileName, request.Archive);
+                var filePath = UploadFileHelper.GetUploadAbsolutePath(_contentRootPath, formFile.FileName, request.Archive);
                 //var trustedFileNameForFileStorage = Path.GetRandomFileName();
                 //var filePath = Path.Combine(
                 //    _targetFilePath, trustedFileNameForFileStorage);

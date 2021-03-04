@@ -92,14 +92,16 @@ namespace Vnr.Storage.API.Features.StreamedUploadPhysical.Commands
 
                         var encryptedFileContent = await EncryptFileContent(streamedFileContent);
 
-                        var filePath = UploadFileHelper.UploadFileLocation(_contentRootPath, request.File.FileName, request.Archive);
-                        var finalFilePath = filePath + ".vnresource";
-                        using (var fileStream = File.Create(finalFilePath))
+                        var uploadFileAbsolutePath = UploadFileHelper.GetUploadAbsolutePath(_contentRootPath, request.File.FileName, request.Archive);
+                        var uploadfileRelativePath = UploadFileHelper.GetUploadRelativePath(request.File.FileName, request.Archive);
+                        var finalUploadFileAbsolutePath = uploadFileAbsolutePath + ".vnresource";
+                        var finalUploadFileRelativePath = uploadfileRelativePath + ".vnresource";
+                        using (var fileStream = File.Create(finalUploadFileAbsolutePath))
                         {
                             await fileStream.WriteAsync(encryptedFileContent, cancellationToken);
                         }
 
-                        await UploadFilePathToDatabase(request.File.FileName, finalFilePath);
+                        await UploadFilePathToDatabase(request.File.FileName, finalUploadFileRelativePath, finalUploadFileAbsolutePath);
                     }
                 }
 
@@ -118,11 +120,12 @@ namespace Vnr.Storage.API.Features.StreamedUploadPhysical.Commands
             return RijndaelCrypto.EncryptDataToBytes(streamedFileContent, myRijndael.Key, myRijndael.IV);
         }
 
-        public async Task UploadFilePathToDatabase(string fileName, string fullPath)
+        public async Task UploadFilePathToDatabase(string fileName, string path, string fullPath)
         {
             var encryptedFile = new EncryptedFile
             {
                 FileName = fileName,
+                Path = path,
                 FullPath = fullPath
             };
             await _context.AddAsync(encryptedFile);

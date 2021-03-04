@@ -45,7 +45,7 @@ namespace Vnr.Storage.API.Features.BufferedFileUploadPhysical.Commands
                 return ResponseProvider.Ok(errorModel);
             }
 
-            var filePath = UploadFileHelper.UploadFileLocation(_contentRootPath, request.File.FileName, request.Archive);
+            var filePath = UploadFileHelper.GetUploadAbsolutePath(_contentRootPath, request.File.FileName, request.Archive);
 
             using (var fileStream = File.Create(filePath))
             {
