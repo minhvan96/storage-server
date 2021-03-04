@@ -9,9 +9,11 @@ using System.Linq;
 using System.Security.Cryptography;
 using System.Threading;
 using System.Threading.Tasks;
+using Vnr.Storage.API.Configuration.Contants;
 using Vnr.Storage.API.Infrastructure.Crypto.RijndaelCrypto;
 using Vnr.Storage.API.Infrastructure.Data;
 using Vnr.Storage.API.Infrastructure.Models;
+using Vnr.Storage.API.Infrastructure.Utilities.FileHelpers;
 
 namespace Vnr.Storage.API.Features.DecryptData.Queries
 {
@@ -36,12 +38,19 @@ namespace Vnr.Storage.API.Features.DecryptData.Queries
                 .FirstOrDefaultAsync(x => x.Id == request.Id);
 
             var encryptedFileAbsolutePath = Path.Combine(_contentRootPath, encryptedFile.Path);
+            var response = new FileContentResultModel();
 
             using (FileStream fs = File.Open(encryptedFileAbsolutePath, FileMode.Open))
             {
                 byte[] data = new BinaryReader(fs).ReadBytes((int)fs.Length);
-                string result = System.Text.Encoding.UTF8.GetString(data);
-                Console.WriteLine(result);
+
+                var decryptedFileContent = await DecryptFileContent(data);
+
+                response.StreamData = FileHelpers.ByteArrayToMemoryStream(decryptedFileContent);
+                response.ContentType = FileConstants.DefaultContentType;
+                response.FileName = encryptedFile.FileName;
+
+                return response;
             }
 
             throw new NotImplementedException();
