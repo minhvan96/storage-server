@@ -7,15 +7,9 @@ namespace Vnr.Storage.API.Infrastructure.Crypto
 {
     public static class RijndaelCrypto
     {
-        public static byte[] EncryptStringToBytes(byte[] Data, byte[] Key, byte[] IV)
+        public static byte[] EncryptDataToBytes(byte[] Data, byte[] Key, byte[] IV)
         {
-            // Check arguments.
-            if (Data == null || Data.Length <= 0)
-                throw new ArgumentNullException("plainText");
-            if (Key == null || Key.Length <= 0)
-                throw new ArgumentNullException("Key");
-            if (IV == null || IV.Length <= 0)
-                throw new ArgumentNullException("IV");
+            RijndaelHelper.CanPerformEncrypt(Data, Key, IV);
             byte[] encrypted;
             // Create an Rijndael object
             // with the specified key and IV.
@@ -45,15 +39,9 @@ namespace Vnr.Storage.API.Infrastructure.Crypto
             return encrypted;
         }
 
-        public static byte[] DecryptStringFromBytes(byte[] cipherText, byte[] Key, byte[] IV)
+        public static byte[] DecryptDataFromBytes(byte[] cipherText, byte[] Key, byte[] IV)
         {
-            // Check arguments.
-            if (cipherText == null || cipherText.Length <= 0)
-                throw new ArgumentNullException("cipherText");
-            if (Key == null || Key.Length <= 0)
-                throw new ArgumentNullException("Key");
-            if (IV == null || IV.Length <= 0)
-                throw new ArgumentNullException("IV");
+            RijndaelHelper.CanPerformDecrypt(cipherText, Key, IV);
 
             // Declare the string used to hold
             // the decrypted text.

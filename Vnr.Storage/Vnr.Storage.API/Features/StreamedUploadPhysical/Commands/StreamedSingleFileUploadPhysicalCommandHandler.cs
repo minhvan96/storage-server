@@ -94,7 +94,7 @@ namespace Vnr.Storage.API.Features.StreamedUploadPhysical.Commands
                         myRijndael.Key = Convert.FromBase64String(rijndaeData.Key);
                         myRijndael.IV = Convert.FromBase64String(rijndaeData.IV);
 
-                        var encryptedFileContent = RijndaelCrypto.EncryptStringToBytes(streamedFileContent, myRijndael.Key, myRijndael.IV);
+                        var encryptedFileContent = RijndaelCrypto.EncryptDataToBytes(streamedFileContent, myRijndael.Key, myRijndael.IV);
                         var filePath = UploadFileHelper.UploadFileLocation(_contentRootPath, request.File.FileName, request.Archive);
                         var finalFilePath = filePath + ".vnresource";
                         using (var fileStream = File.Create(finalFilePath))

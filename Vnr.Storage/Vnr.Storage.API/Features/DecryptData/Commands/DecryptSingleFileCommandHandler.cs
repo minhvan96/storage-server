@@ -102,7 +102,7 @@ namespace Vnr.Storage.API.Features.DecryptData.Commands
             myRijndael.Key = Convert.FromBase64String(rijndaeData.Key);
             myRijndael.IV = Convert.FromBase64String(rijndaeData.IV);
 
-            var decryptedFileContent = RijndaelCrypto.DecryptStringFromBytes(content, myRijndael.Key, myRijndael.IV);
+            var decryptedFileContent = RijndaelCrypto.DecryptDataFromBytes(content, myRijndael.Key, myRijndael.IV);
             return decryptedFileContent;
         }
     }
