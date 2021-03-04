@@ -89,25 +89,30 @@ namespace Vnr.Storage.API.Features.StreamedUploadPhysical.Commands
                             return ResponseProvider.Ok(errorModel);
                         }
 
-                        RijndaelManaged myRijndael = new RijndaelManaged();
-                        var rijndaeData = await _context.RijndaelKeys.FirstOrDefaultAsync();
-                        myRijndael.Key = Convert.FromBase64String(rijndaeData.Key);
-                        myRijndael.IV = Convert.FromBase64String(rijndaeData.IV);
+                        var encryptedFileContent = await EncryptFileContent(streamedFileContent);
 
-                        var encryptedFileContent = RijndaelCrypto.EncryptDataToBytes(streamedFileContent, myRijndael.Key, myRijndael.IV);
                         var filePath = UploadFileHelper.UploadFileLocation(_contentRootPath, request.File.FileName, request.Archive);
                         var finalFilePath = filePath + ".vnresource";
                         using (var fileStream = File.Create(finalFilePath))
                         {
                             await fileStream.WriteAsync(encryptedFileContent, cancellationToken);
                         }
-                        return ResponseProvider.Ok("Upload file successful");
                     }
                 }
 
                 section = await reader.ReadNextSectionAsync(cancellationToken);
             }
-            return ResponseProvider.Ok();
+            return ResponseProvider.Ok("Upload file successful");
+        }
+
+        public async Task<byte[]> EncryptFileContent(byte[] streamedFileContent)
+        {
+            RijndaelManaged myRijndael = new RijndaelManaged();
+            var rijndaeData = await _context.RijndaelKeys.FirstOrDefaultAsync();
+            myRijndael.Key = Convert.FromBase64String(rijndaeData.Key);
+            myRijndael.IV = Convert.FromBase64String(rijndaeData.IV);
+
+            return RijndaelCrypto.EncryptDataToBytes(streamedFileContent, myRijndael.Key, myRijndael.IV);
         }
     }
 }
