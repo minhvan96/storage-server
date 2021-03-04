@@ -9,7 +9,8 @@ namespace Vnr.Storage.API.Infrastructure.Crypto.RijndaelCrypto
         public static byte[] EncryptDataToBytes(byte[] Data, byte[] Key, byte[] IV)
         {
             RijndaelHelper.CanPerformEncrypt(Data, Key, IV);
-            byte[] encrypted;
+            byte[] encryptedData;
+
             // Create an Rijndael object
             // with the specified key and IV.
             using (Rijndael rijAlg = Rijndael.Create())
@@ -29,22 +30,21 @@ namespace Vnr.Storage.API.Infrastructure.Crypto.RijndaelCrypto
                         {
                             binaryWriter.Write(Data);
                         }
-                        encrypted = msEncrypt.ToArray();
+                        encryptedData = msEncrypt.ToArray();
                     }
                 }
             }
 
             // Return the encrypted bytes from the memory stream.
-            return encrypted;
+            return encryptedData;
         }
 
         public static byte[] DecryptDataFromBytes(byte[] cipherText, byte[] Key, byte[] IV)
         {
             RijndaelHelper.CanPerformDecrypt(cipherText, Key, IV);
 
-            // Declare the string used to hold
-            // the decrypted text.
-            byte[] data = null;
+            byte[] decryptedData = null;
+
             // Create an Rijndael object
             // with the specified key and IV.
             using (Rijndael rijAlg = Rijndael.Create())
@@ -62,15 +62,13 @@ namespace Vnr.Storage.API.Infrastructure.Crypto.RijndaelCrypto
                     {
                         using (BinaryReader binaryReader = new BinaryReader(csDecrypt))
                         {
-                            // Read the decrypted bytes from the decrypting stream
-                            // and place them in a string.
-                            data = binaryReader.ReadAllBytes();
+                            decryptedData = binaryReader.ReadAllBytes();
                         }
                     }
                 }
             }
 
-            return data;
+            return decryptedData;
         }
     }
 }
