@@ -1,10 +1,10 @@
 ﻿using System.IO;
 using System.Security.Cryptography;
-using Vnr.Storage.API.Infrastructure.Utilities;
+using Vnr.Storage.Security.Utilities;
 
-namespace Vnr.Storage.API.Infrastructure.Crypto.RijndaelCrypto
+namespace Vnr.Storage.Security.Crypto.RijndaelCrypto
 {
-    public static class RijndaelCrypto
+    public static partial class RijndaelCrypto
     {
         public static byte[] EncryptDataToBytes(byte[] Data, byte[] Key, byte[] IV)
         {

@@ -28,7 +28,7 @@ namespace Vnr.Storage.API.Features.DecryptData.Queries
         {
             var encryptedFile = await _context.EncryptedFiles
                 .AsNoTracking()
-                .FirstOrDefaultAsync(x => x.Id == request.Id);
+                .FirstOrDefaultAsync(x => x.Id == request.Id, cancellationToken);
 
             var encryptedFileAbsolutePath = Path.Combine(_contentRootPath, encryptedFile.Path);
             var response = new FileContentResultModel();
