@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Http;
 using System.ComponentModel.DataAnnotations;
 using Vnr.Storage.API.Infrastructure.BaseResponse;
-using Vnr.Storage.API.Infrastructure.Enums;
 
 namespace Vnr.Storage.API.Features.BufferedFileUploadPhysical.Commands
 {
@@ -12,7 +11,7 @@ namespace Vnr.Storage.API.Features.BufferedFileUploadPhysical.Commands
         public IFormFile File { get; set; }
 
         [Required]
-        public Archive Archive { get; set; }
+        public Infrastructure.Enums.Archive Archive { get; set; }
     }
 
     public class BufferedSingleFileUploadPhysicalRequest
@@ -21,6 +20,6 @@ namespace Vnr.Storage.API.Features.BufferedFileUploadPhysical.Commands
         public IFormFile File { get; set; }
 
         [Required]
-        public Archive Archive { get; set; }
+        public Infrastructure.Enums.Archive Archive { get; set; }
     }
 }

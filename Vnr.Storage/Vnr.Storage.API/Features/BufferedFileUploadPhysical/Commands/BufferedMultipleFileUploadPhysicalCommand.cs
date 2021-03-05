@@ -13,7 +13,7 @@ namespace Vnr.Storage.API.Features.BufferedFileUploadPhysical.Commands
         public List<IFormFile> Files { get; set; }
 
         [Required]
-        public Archive Archive { get; set; }
+        public Infrastructure.Enums.Archive Archive { get; set; }
     }
 
     public class BufferedMultipleFileUploadPhysicalRequest
@@ -22,6 +22,6 @@ namespace Vnr.Storage.API.Features.BufferedFileUploadPhysical.Commands
         public List<IFormFile> Files { get; set; }
 
         [Required]
-        public Archive Archive { get; set; }
+        public Infrastructure.Enums.Archive Archive { get; set; }
     }
 }

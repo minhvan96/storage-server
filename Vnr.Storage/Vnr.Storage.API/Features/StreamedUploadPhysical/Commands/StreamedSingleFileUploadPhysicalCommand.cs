@@ -12,7 +12,7 @@ namespace Vnr.Storage.API.Features.StreamedUploadPhysical.Commands
         public IFormFile File { get; set; }
 
         [Required]
-        public Archive Archive { get; set; }
+        public Infrastructure.Enums.Archive Archive { get; set; }
 
         public bool Encrypt { get; set; }
     }

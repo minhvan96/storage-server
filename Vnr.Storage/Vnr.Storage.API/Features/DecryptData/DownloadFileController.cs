@@ -8,10 +8,10 @@ using Vnr.Storage.API.Infrastructure;
 namespace Vnr.Storage.API.Features.DecryptData
 {
     [Consumes("multipart/form-data")]
-    [Route("api/[controller]")]
-    public class DecryptController : ApiControllerBase
+    [Route("api/archive/download")]
+    public class DownloadFileController : ApiControllerBase
     {
-        public DecryptController(IMediator mediator) : base(mediator)
+        public DownloadFileController(IMediator mediator) : base(mediator)
         {
         }
 

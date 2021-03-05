@@ -7,10 +7,10 @@ using Vnr.Storage.API.Infrastructure;
 namespace Vnr.Storage.API.Features.StreamedUploadPhysical
 {
     [Consumes("multipart/form-data")]
-    [Route("api/[controller]")]
-    public class StreamingController : ApiControllerBase
+    [Route("api/archive/upload")]
+    public class UploadFileController : ApiControllerBase
     {
-        public StreamingController(IMediator mediator) : base(mediator)
+        public UploadFileController(IMediator mediator) : base(mediator)
         {
         }
 
