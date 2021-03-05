@@ -12,24 +12,19 @@ namespace Vnr.Storage.Security.Crypto.RijndaelCrypto
 
             byte[] decryptedData = null;
 
-            // Create an Rijndael object
-            // with the specified key and IV.
             using (Rijndael rijAlg = Rijndael.Create())
             {
                 rijAlg.Key = Key;
                 rijAlg.IV = IV;
 
-                // Create a decryptor to perform the stream transform.
                 ICryptoTransform decryptor = rijAlg.CreateDecryptor(rijAlg.Key, rijAlg.IV);
 
-                // Create the streams used for decryption.
                 using (MemoryStream msDecrypt = new MemoryStream(cipherText))
                 {
                     using (CryptoStream csDecrypt = new CryptoStream(msDecrypt, decryptor, CryptoStreamMode.Read))
                     {
                         using (BinaryReader binaryReader = new BinaryReader(csDecrypt))
                         {
-                            //decryptedData = binaryReader.ReadBytes((int)csDecrypt.Length);
                             decryptedData = binaryReader.ReadAllBytes();
                         }
                     }
@@ -45,17 +40,13 @@ namespace Vnr.Storage.Security.Crypto.RijndaelCrypto
 
             byte[] decryptedData = null;
 
-            // Create an Rijndael object
-            // with the specified key and IV.
             using (Rijndael rijAlg = Rijndael.Create())
             {
                 rijAlg.Key = Key;
                 rijAlg.IV = IV;
 
-                // Create a decryptor to perform the stream transform.
                 ICryptoTransform decryptor = rijAlg.CreateDecryptor(rijAlg.Key, rijAlg.IV);
 
-                // Create the streams used for decryption.
                 using (MemoryStream msDecrypt = new MemoryStream(Data))
                 {
                     using (CryptoStream csDecrypt = new CryptoStream(msDecrypt, decryptor, CryptoStreamMode.Read))
