@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Net.Http.Headers;
 using System;
+using System.Diagnostics;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Threading;
@@ -19,7 +20,7 @@ using Vnr.Storage.API.Infrastructure.Data.Entities;
 using Vnr.Storage.API.Infrastructure.Models;
 using Vnr.Storage.API.Infrastructure.Utilities;
 using Vnr.Storage.API.Infrastructure.Utilities.FileHelpers;
-using Vnr.Storage.Security.Crypto.RijndaelCrypto;
+using Vnr.Storage.Security.Crypto.Symmetric;
 
 namespace Vnr.Storage.API.Features.StreamedUploadPhysical.Commands
 {
@@ -47,6 +48,8 @@ namespace Vnr.Storage.API.Features.StreamedUploadPhysical.Commands
 
         public async Task<ResponseModel> Handle(StreamedSingleFileUploadPhysicalCommand request, CancellationToken cancellationToken)
         {
+            var swTotalEncrypt = new Stopwatch();
+            swTotalEncrypt.Start();
             var errorModel = new FormFileErrorModel();
 
             if (!MultipartRequestHelper.IsMultipartContentType(_accessor.HttpContext.Request.ContentType))
@@ -102,6 +105,10 @@ namespace Vnr.Storage.API.Features.StreamedUploadPhysical.Commands
 
                 section = await reader.ReadNextSectionAsync(cancellationToken);
             }
+            swTotalEncrypt.Stop();
+            Console.Write($"File length: {request.File.Length / 1024f / 1024f} MB");
+            Console.WriteLine($"Encrypt time: {swTotalEncrypt.ElapsedMilliseconds}");
+
             return ResponseProvider.Ok("Upload file successful");
         }
 
@@ -112,7 +119,7 @@ namespace Vnr.Storage.API.Features.StreamedUploadPhysical.Commands
             myRijndael.Key = Convert.FromBase64String(rijndaeData.Key);
             myRijndael.IV = Convert.FromBase64String(rijndaeData.IV);
 
-            return RijndaelCrypto.EncryptDataAndSaveToFile(streamedFileContent, myRijndael.Key, myRijndael.IV, absolutePath, CryptoAlgorithm.Rijndael);
+            return SymmetricCrypto.EncryptDataAndSaveToFile(streamedFileContent, myRijndael.Key, myRijndael.IV, absolutePath, CryptoAlgorithm.Rijndael);
         }
 
         public async Task UploadFilePathToDatabase(string fileName, string path, string fullPath)

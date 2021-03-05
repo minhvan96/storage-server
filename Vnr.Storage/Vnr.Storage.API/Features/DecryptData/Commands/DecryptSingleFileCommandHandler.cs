@@ -17,7 +17,7 @@ using Vnr.Storage.API.Infrastructure.Data;
 using Vnr.Storage.API.Infrastructure.Models;
 using Vnr.Storage.API.Infrastructure.Utilities;
 using Vnr.Storage.API.Infrastructure.Utilities.FileHelpers;
-using Vnr.Storage.Security.Crypto.RijndaelCrypto;
+using Vnr.Storage.Security.Crypto.Symmetric;
 
 namespace Vnr.Storage.API.Features.DecryptData.Commands
 {
@@ -98,7 +98,7 @@ namespace Vnr.Storage.API.Features.DecryptData.Commands
             myRijndael.Key = Convert.FromBase64String(rijndaeData.Key);
             myRijndael.IV = Convert.FromBase64String(rijndaeData.IV);
 
-            return RijndaelCrypto.DecryptDataToStream(data, myRijndael.Key, myRijndael.IV, CryptoAlgorithm.Rijndael);
+            return SymmetricCrypto.DecryptDataToStream(data, myRijndael.Key, myRijndael.IV, CryptoAlgorithm.Rijndael);
         }
     }
 }

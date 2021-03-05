@@ -1,13 +1,13 @@
 ﻿using System.IO;
 using System.Security.Cryptography;
 
-namespace Vnr.Storage.Security.Crypto.RijndaelCrypto
+namespace Vnr.Storage.Security.Crypto.Symmetric
 {
-    public static partial class RijndaelCrypto
+    public static partial class SymmetricCrypto
     {
         public static byte[] EncryptDataToBytes(byte[] Data, byte[] Key, byte[] IV)
         {
-            RijndaelHelper.CanPerformEncrypt(Data, Key, IV);
+            SymmetricCryptoHelper.CanPerformEncrypt(Data, Key, IV);
             byte[] encryptedData;
 
             using (Rijndael rijAlg = Rijndael.Create())
@@ -35,7 +35,7 @@ namespace Vnr.Storage.Security.Crypto.RijndaelCrypto
 
         public static bool EncryptDataAndSaveToFile(byte[] Data, byte[] Key, byte[] IV, string absolutePath, CryptoAlgorithm crypAlg = CryptoAlgorithm.Rijndael)
         {
-            RijndaelHelper.CanPerformEncrypt(Data, Key, IV);
+            SymmetricCryptoHelper.CanPerformEncrypt(Data, Key, IV);
 
             if (crypAlg == CryptoAlgorithm.Rijndael)
             {

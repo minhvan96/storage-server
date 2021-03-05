@@ -2,13 +2,13 @@
 using System.Security.Cryptography;
 using Vnr.Storage.Security.Utilities;
 
-namespace Vnr.Storage.Security.Crypto.RijndaelCrypto
+namespace Vnr.Storage.Security.Crypto.Symmetric
 {
-    public static partial class RijndaelCrypto
+    public static partial class SymmetricCrypto
     {
         public static byte[] DecryptDataFromBytes(byte[] cipherText, byte[] Key, byte[] IV)
         {
-            RijndaelHelper.CanPerformDecrypt(cipherText, Key, IV);
+            SymmetricCryptoHelper.CanPerformDecrypt(cipherText, Key, IV);
 
             byte[] decryptedData = null;
 
@@ -36,7 +36,7 @@ namespace Vnr.Storage.Security.Crypto.RijndaelCrypto
 
         public static Stream DecryptDataToStream(byte[] Data, byte[] Key, byte[] IV, CryptoAlgorithm crypAlg = CryptoAlgorithm.Rijndael)
         {
-            RijndaelHelper.CanPerformDecrypt(Data, Key, IV);
+            SymmetricCryptoHelper.CanPerformDecrypt(Data, Key, IV);
 
             byte[] decryptedData = null;
 
