@@ -48,13 +48,14 @@ namespace Vnr.Storage.Security.Crypto.RijndaelCrypto
                 rijAlg.IV = IV;
 
                 ICryptoTransform decryptor = rijAlg.CreateDecryptor(rijAlg.Key, rijAlg.IV);
+
                 MemoryStream msDecrypt = new MemoryStream(Data);
 
-                using (CryptoStream csDecrypt = new CryptoStream(msDecrypt, decryptor, CryptoStreamMode.Write))
+                using (CryptoStream csDecrypt = new CryptoStream(msDecrypt, decryptor, CryptoStreamMode.Read))
                 {
-                    using (BinaryWriter binaryWriter = new BinaryWriter(csDecrypt))
+                    using (BinaryReader binaryReader = new BinaryReader(csDecrypt))
                     {
-                        binaryWriter.Write(Data);
+                        binaryReader.Read(Data);
                     }
                 }
                 return msDecrypt;
