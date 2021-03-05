@@ -1,8 +1,8 @@
 ﻿using System;
 
-namespace Vnr.Storage.Security.Crypto.RijndaelCrypto
+namespace Vnr.Storage.Security.Crypto.AesCrypto
 {
-    public static class RijndaelHelper
+    public static class AesHelper
     {
         public static void CanPerformEncrypt(byte[] data, byte[] key, byte[] iv)
         {
@@ -23,11 +23,5 @@ namespace Vnr.Storage.Security.Crypto.RijndaelCrypto
             if (iv == null || iv.Length <= 0)
                 throw new ArgumentNullException("iv");
         }
-    }
-
-    public enum CryptoAlgorithm
-    {
-        Rijndael,
-        Aes
     }
 }
