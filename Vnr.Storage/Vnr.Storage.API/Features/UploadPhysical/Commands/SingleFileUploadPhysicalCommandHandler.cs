@@ -22,7 +22,7 @@ using Vnr.Storage.API.Infrastructure.Utilities;
 using Vnr.Storage.API.Infrastructure.Utilities.FileHelpers;
 using Vnr.Storage.Security.Crypto.Symmetric;
 
-namespace Vnr.Storage.API.Features.StreamedUploadPhysical.Commands
+namespace Vnr.Storage.API.Features.UploadPhysical.Commands
 {
     public class SingleFileUploadPhysicalCommandHandler : IRequestHandler<SingleFileUploadPhysicalCommand, ResponseModel>
     {
@@ -56,7 +56,6 @@ namespace Vnr.Storage.API.Features.StreamedUploadPhysical.Commands
             {
                 errorModel.Errors.Add("File",
                     $"The request couldn't be processed (Error 1).");
-                // Log error
 
                 return ResponseProvider.Ok(errorModel);
             }

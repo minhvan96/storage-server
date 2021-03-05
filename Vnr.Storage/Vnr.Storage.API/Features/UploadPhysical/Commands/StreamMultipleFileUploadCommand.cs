@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Http;
 using System.ComponentModel.DataAnnotations;
 using Vnr.Storage.API.Infrastructure.BaseResponse;
 
-namespace Vnr.Storage.API.Features.StreamedUploadPhysical.Commands
+namespace Vnr.Storage.API.Features.UploadPhysical.Commands
 {
     public class StreamMultipleFileUploadCommand : IRequest<ResponseModel>
     {

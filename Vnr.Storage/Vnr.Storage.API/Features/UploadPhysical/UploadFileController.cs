@@ -1,7 +1,7 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
-using Vnr.Storage.API.Features.StreamedUploadPhysical.Commands;
+using Vnr.Storage.API.Features.UploadPhysical.Commands;
 using Vnr.Storage.API.Infrastructure;
 
 namespace Vnr.Storage.API.Features.StreamedUploadPhysical

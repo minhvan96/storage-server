@@ -10,7 +10,7 @@ using Vnr.Storage.API.Configuration;
 using Vnr.Storage.API.Infrastructure.BaseResponse;
 using Vnr.Storage.API.Infrastructure.Data;
 
-namespace Vnr.Storage.API.Features.StreamedUploadPhysical.Commands
+namespace Vnr.Storage.API.Features.UploadPhysical.Commands
 {
     public class StreamMultipleFileUploadCommandHandler : IRequestHandler<StreamMultipleFileUploadCommand, ResponseModel>
     {

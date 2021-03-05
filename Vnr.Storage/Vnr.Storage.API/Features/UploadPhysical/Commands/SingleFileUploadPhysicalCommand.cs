@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using Vnr.Storage.API.Infrastructure.BaseResponse;
 using Vnr.Storage.API.Infrastructure.Enums;
 
-namespace Vnr.Storage.API.Features.StreamedUploadPhysical.Commands
+namespace Vnr.Storage.API.Features.UploadPhysical.Commands
 {
     public class SingleFileUploadPhysicalCommand : IRequest<ResponseModel>
     {
