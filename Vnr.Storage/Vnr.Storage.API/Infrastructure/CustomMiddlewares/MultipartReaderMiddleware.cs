@@ -52,7 +52,7 @@ namespace Vnr.Storage.API.Infrastructure.CustomMiddlewares
                     {
                         await FileHelpers.ProcessStreamedFile(
                             section, contentDisposition, errorModel, new string[]
-                            { ".docx", ".xlsx", ".txt"}, 204857600, Enums.ValidateExtension.Encrypt);
+                            { ".docx", ".xlsx", ".txt", ".pdf"}, 204857600, Enums.ValidateExtension.Encrypt);
 
                         if (errorModel.Errors.Any())
                         {

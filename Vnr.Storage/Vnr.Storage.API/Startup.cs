@@ -11,6 +11,7 @@ using Newtonsoft.Json.Converters;
 using System.IO;
 using Vnr.Storage.API.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
+using Vnr.Storage.API.Infrastructure.CustomMiddlewares;
 
 namespace Vnr.Storage.API
 {
@@ -73,6 +74,8 @@ namespace Vnr.Storage.API
             app.UseRouting();
 
             app.UseAuthorization();
+
+            app.UseMiddleware<MultipartReaderMiddleware>();
 
             app.UseEndpoints(endpoints =>
             {

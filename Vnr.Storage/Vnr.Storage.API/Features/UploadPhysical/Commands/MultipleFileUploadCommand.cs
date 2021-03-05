@@ -5,7 +5,7 @@ using Vnr.Storage.API.Infrastructure.BaseResponse;
 
 namespace Vnr.Storage.API.Features.UploadPhysical.Commands
 {
-    public class StreamMultipleFileUploadCommand : IRequest<ResponseModel>
+    public class MultipleFileUploadCommand : IRequest<ResponseModel>
     {
         [Required]
         public IFormFileCollection Files { get; set; }

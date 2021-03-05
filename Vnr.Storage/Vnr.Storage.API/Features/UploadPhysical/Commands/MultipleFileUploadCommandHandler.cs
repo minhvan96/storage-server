@@ -12,7 +12,7 @@ using Vnr.Storage.API.Infrastructure.Data;
 
 namespace Vnr.Storage.API.Features.UploadPhysical.Commands
 {
-    public class StreamMultipleFileUploadCommandHandler : IRequestHandler<StreamMultipleFileUploadCommand, ResponseModel>
+    public class MultipleFileUploadCommandHandler : IRequestHandler<MultipleFileUploadCommand, ResponseModel>
     {
         private readonly IHttpContextAccessor _accessor;
         private readonly long _streamFileLimitSize;
@@ -21,7 +21,7 @@ namespace Vnr.Storage.API.Features.UploadPhysical.Commands
         private static readonly FormOptions _defaultFormOptions = new FormOptions();
         private readonly StorageContext _context;
 
-        public StreamMultipleFileUploadCommandHandler(IConfiguration configuration, IWebHostEnvironment env, IHttpContextAccessor accessor, StorageContext context)
+        public MultipleFileUploadCommandHandler(IConfiguration configuration, IWebHostEnvironment env, IHttpContextAccessor accessor, StorageContext context)
         {
             var fileSizeLimitConfiguration = configuration.GetSection(nameof(FileSizeLimitConfiguration)).Get<FileSizeLimitConfiguration>();
             _streamFileLimitSize = fileSizeLimitConfiguration.StreamFileSizeLimit;
@@ -34,7 +34,7 @@ namespace Vnr.Storage.API.Features.UploadPhysical.Commands
             _context = context;
         }
 
-        public Task<ResponseModel> Handle(StreamMultipleFileUploadCommand request, CancellationToken cancellationToken)
+        public Task<ResponseModel> Handle(MultipleFileUploadCommand request, CancellationToken cancellationToken)
         {
             throw new NotImplementedException();
         }

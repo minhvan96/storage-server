@@ -16,7 +16,12 @@ namespace Vnr.Storage.API.Features.StreamedUploadPhysical
 
         [HttpPost]
         [RequestFormLimits(MultipartBodyLengthLimit = 104857600)]
-        public Task<IActionResult> StreamedSingleFileUploadPhysical(SingleFileUploadPhysicalCommand command)
+        public Task<IActionResult> SingleFileUploadPhysical(SingleFileUploadPhysicalCommand command)
+            => HandleRequest(command);
+
+        [HttpPost("multiple")]
+        [RequestFormLimits(MultipartBodyLengthLimit = 104857600)]
+        public Task<IActionResult> MultipleFileUploadPhysical(MultipleFileUploadCommand command)
             => HandleRequest(command);
     }
 }
