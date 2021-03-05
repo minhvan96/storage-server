@@ -19,6 +19,7 @@ using Vnr.Storage.API.Infrastructure.Data.Entities;
 using Vnr.Storage.API.Infrastructure.Models;
 using Vnr.Storage.API.Infrastructure.Utilities;
 using Vnr.Storage.API.Infrastructure.Utilities.FileHelpers;
+using Vnr.Storage.Security.Crypto.RijndaelCrypto;
 
 namespace Vnr.Storage.API.Features.StreamedUploadPhysical.Commands
 {
@@ -111,7 +112,7 @@ namespace Vnr.Storage.API.Features.StreamedUploadPhysical.Commands
             myRijndael.Key = Convert.FromBase64String(rijndaeData.Key);
             myRijndael.IV = Convert.FromBase64String(rijndaeData.IV);
 
-            return Vnr.Storage.Security.Crypto.RijndaelCrypto.RijndaelCrypto.EncryptDataAndSaveToFile(streamedFileContent, myRijndael.Key, myRijndael.IV, absolutePath);
+            return RijndaelCrypto.EncryptDataAndSaveToFile(streamedFileContent, myRijndael.Key, myRijndael.IV, absolutePath, CryptoAlgorithm.Rijndael);
         }
 
         public async Task UploadFilePathToDatabase(string fileName, string path, string fullPath)
