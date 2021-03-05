@@ -108,7 +108,7 @@ namespace Vnr.Storage.API.Features.UploadPhysical.Commands
             Console.Write($"File length: {request.File.Length / 1024f / 1024f} MB");
             Console.WriteLine($"Encrypt time: {swTotalEncrypt.ElapsedMilliseconds}");
 
-            return ResponseProvider.Ok("Upload file successful");
+            return ResponseProvider.Ok("Upload file successfully");
         }
 
         private async Task<bool> EncryptDataToFile(byte[] streamedFileContent, string absolutePath)
