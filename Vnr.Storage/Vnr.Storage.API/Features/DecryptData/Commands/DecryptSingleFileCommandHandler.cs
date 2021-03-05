@@ -92,6 +92,17 @@ namespace Vnr.Storage.API.Features.DecryptData.Commands
             return new FileContentResultModel();
         }
 
+        private async Task<Stream> DecryptFileContentToStream(byte[] data)
+        {
+            RijndaelManaged myRijndael = new RijndaelManaged();
+
+            var rijndaeData = await _context.RijndaelKeys.FirstOrDefaultAsync();
+            myRijndael.Key = Convert.FromBase64String(rijndaeData.Key);
+            myRijndael.IV = Convert.FromBase64String(rijndaeData.IV);
+
+            return Vnr.Storage.Security.Crypto.RijndaelCrypto.RijndaelCrypto.DecryptDataToStream(data, myRijndael.Key, myRijndael.Key);
+        }
+
         private async Task<byte[]> DecryptFileContent(byte[] content)
         {
             RijndaelManaged myRijndael = new RijndaelManaged();
