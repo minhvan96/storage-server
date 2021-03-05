@@ -24,7 +24,7 @@ using Vnr.Storage.Security.Crypto.Symmetric;
 
 namespace Vnr.Storage.API.Features.StreamedUploadPhysical.Commands
 {
-    public class StreamedSingleFileUploadPhysicalCommandHandler : IRequestHandler<StreamedSingleFileUploadPhysicalCommand, ResponseModel>
+    public class SingleFileUploadPhysicalCommandHandler : IRequestHandler<SingleFileUploadPhysicalCommand, ResponseModel>
     {
         private readonly IHttpContextAccessor _accessor;
         private readonly long _streamFileLimitSize;
@@ -33,7 +33,7 @@ namespace Vnr.Storage.API.Features.StreamedUploadPhysical.Commands
         private static readonly FormOptions _defaultFormOptions = new FormOptions();
         private readonly StorageContext _context;
 
-        public StreamedSingleFileUploadPhysicalCommandHandler(IConfiguration configuration, IWebHostEnvironment env, IHttpContextAccessor accessor, StorageContext context)
+        public SingleFileUploadPhysicalCommandHandler(IConfiguration configuration, IWebHostEnvironment env, IHttpContextAccessor accessor, StorageContext context)
         {
             var fileSizeLimitConfiguration = configuration.GetSection(nameof(FileSizeLimitConfiguration)).Get<FileSizeLimitConfiguration>();
             _streamFileLimitSize = fileSizeLimitConfiguration.StreamFileSizeLimit;
@@ -46,7 +46,7 @@ namespace Vnr.Storage.API.Features.StreamedUploadPhysical.Commands
             _context = context;
         }
 
-        public async Task<ResponseModel> Handle(StreamedSingleFileUploadPhysicalCommand request, CancellationToken cancellationToken)
+        public async Task<ResponseModel> Handle(SingleFileUploadPhysicalCommand request, CancellationToken cancellationToken)
         {
             var swTotalEncrypt = new Stopwatch();
             swTotalEncrypt.Start();
