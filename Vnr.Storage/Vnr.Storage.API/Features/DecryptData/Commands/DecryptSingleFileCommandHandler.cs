@@ -13,7 +13,6 @@ using System.Security.Cryptography;
 using System.Threading;
 using System.Threading.Tasks;
 using Vnr.Storage.API.Configuration;
-using Vnr.Storage.API.Infrastructure.Crypto.RijndaelCrypto;
 using Vnr.Storage.API.Infrastructure.Data;
 using Vnr.Storage.API.Infrastructure.Models;
 using Vnr.Storage.API.Infrastructure.Utilities;
@@ -78,9 +77,7 @@ namespace Vnr.Storage.API.Features.DecryptData.Commands
                             return response;
                         }
 
-                        var decryptedFileContent = await DecryptFileContent(streamedFileContent);
-
-                        response.StreamData = FileHelpers.ByteArrayToMemoryStream(decryptedFileContent);
+                        response.StreamData = await DecryptFileContentToStream(streamedFileContent);
                         response.FileName = Path.GetFileNameWithoutExtension(request.File.FileName);
 
                         return response;
@@ -100,19 +97,7 @@ namespace Vnr.Storage.API.Features.DecryptData.Commands
             myRijndael.Key = Convert.FromBase64String(rijndaeData.Key);
             myRijndael.IV = Convert.FromBase64String(rijndaeData.IV);
 
-            return Vnr.Storage.Security.Crypto.RijndaelCrypto.RijndaelCrypto.DecryptDataToStream(data, myRijndael.Key, myRijndael.Key);
-        }
-
-        private async Task<byte[]> DecryptFileContent(byte[] content)
-        {
-            RijndaelManaged myRijndael = new RijndaelManaged();
-
-            var rijndaeData = await _context.RijndaelKeys.FirstOrDefaultAsync();
-            myRijndael.Key = Convert.FromBase64String(rijndaeData.Key);
-            myRijndael.IV = Convert.FromBase64String(rijndaeData.IV);
-
-            var decryptedFileContent = RijndaelCrypto.DecryptDataFromBytes(content, myRijndael.Key, myRijndael.IV);
-            return decryptedFileContent;
+            return Vnr.Storage.Security.Crypto.RijndaelCrypto.RijndaelCrypto.DecryptDataToStream(data, myRijndael.Key, myRijndael.IV);
         }
     }
 }

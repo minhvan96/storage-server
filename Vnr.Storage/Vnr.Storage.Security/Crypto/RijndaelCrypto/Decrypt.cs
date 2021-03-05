@@ -42,24 +42,32 @@ namespace Vnr.Storage.Security.Crypto.RijndaelCrypto
         public static Stream DecryptDataToStream(byte[] Data, byte[] Key, byte[] IV)
         {
             RijndaelHelper.CanPerformDecrypt(Data, Key, IV);
+
+            byte[] decryptedData = null;
+
+            // Create an Rijndael object
+            // with the specified key and IV.
             using (Rijndael rijAlg = Rijndael.Create())
             {
                 rijAlg.Key = Key;
                 rijAlg.IV = IV;
 
+                // Create a decryptor to perform the stream transform.
                 ICryptoTransform decryptor = rijAlg.CreateDecryptor(rijAlg.Key, rijAlg.IV);
 
-                MemoryStream msDecrypt = new MemoryStream(Data);
-
-                using (CryptoStream csDecrypt = new CryptoStream(msDecrypt, decryptor, CryptoStreamMode.Read))
+                // Create the streams used for decryption.
+                using (MemoryStream msDecrypt = new MemoryStream(Data))
                 {
-                    using (BinaryReader binaryReader = new BinaryReader(csDecrypt))
+                    using (CryptoStream csDecrypt = new CryptoStream(msDecrypt, decryptor, CryptoStreamMode.Read))
                     {
-                        binaryReader.Read(Data);
+                        using (BinaryReader binaryReader = new BinaryReader(csDecrypt))
+                        {
+                            decryptedData = binaryReader.ReadAllBytes();
+                        }
                     }
                 }
-                return msDecrypt;
             }
+            return new MemoryStream(decryptedData);
         }
     }
 }
