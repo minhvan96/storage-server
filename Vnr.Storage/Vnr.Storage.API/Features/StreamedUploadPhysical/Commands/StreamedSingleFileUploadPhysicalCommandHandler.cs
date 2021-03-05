@@ -7,7 +7,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Net.Http.Headers;
 using System;
-using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Threading;
@@ -90,16 +89,12 @@ namespace Vnr.Storage.API.Features.StreamedUploadPhysical.Commands
                             return ResponseProvider.Ok(errorModel);
                         }
 
-                        var encryptedFileContent = await EncryptFileContent(streamedFileContent);
-
                         var uploadFileAbsolutePath = UploadFileHelper.GetUploadAbsolutePath(_contentRootPath, request.File.FileName, request.Archive);
                         var uploadfileRelativePath = UploadFileHelper.GetUploadRelativePath(request.File.FileName, request.Archive);
                         var finalUploadFileAbsolutePath = uploadFileAbsolutePath + ".vnresource";
                         var finalUploadFileRelativePath = uploadfileRelativePath + ".vnresource";
-                        using (var fileStream = File.Create(finalUploadFileAbsolutePath))
-                        {
-                            await fileStream.WriteAsync(encryptedFileContent, cancellationToken);
-                        }
+
+                        await EncryptDataToFile(streamedFileContent, finalUploadFileAbsolutePath);
 
                         await UploadFilePathToDatabase(request.File.FileName, finalUploadFileRelativePath, finalUploadFileAbsolutePath);
                     }
@@ -110,14 +105,14 @@ namespace Vnr.Storage.API.Features.StreamedUploadPhysical.Commands
             return ResponseProvider.Ok("Upload file successful");
         }
 
-        private async Task<byte[]> EncryptFileContent(byte[] streamedFileContent)
+        private async Task<bool> EncryptDataToFile(byte[] streamedFileContent, string absolutePath)
         {
             RijndaelManaged myRijndael = new RijndaelManaged();
             var rijndaeData = await _context.RijndaelKeys.FirstOrDefaultAsync();
             myRijndael.Key = Convert.FromBase64String(rijndaeData.Key);
             myRijndael.IV = Convert.FromBase64String(rijndaeData.IV);
 
-            return RijndaelCrypto.EncryptDataToBytes(streamedFileContent, myRijndael.Key, myRijndael.IV);
+            return Vnr.Storage.Security.Crypto.RijndaelCrypto.RijndaelCrypto.EncryptDataAndSaveToFile(streamedFileContent, myRijndael.Key, myRijndael.IV, absolutePath);
         }
 
         public async Task UploadFilePathToDatabase(string fileName, string path, string fullPath)

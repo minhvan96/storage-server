@@ -9,8 +9,8 @@ using Vnr.Storage.API.Infrastructure.Data;
 namespace Vnr.Storage.API.Migrations
 {
     [DbContext(typeof(StorageContext))]
-    [Migration("20210304034119_UpdateEntity")]
-    partial class UpdateEntity
+    [Migration("20210305042317_init")]
+    partial class init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {

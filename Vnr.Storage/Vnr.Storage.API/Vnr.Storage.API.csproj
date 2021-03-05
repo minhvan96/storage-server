@@ -37,4 +37,8 @@
 	<ItemGroup>
 		<None Include="..\.editorconfig" Link=".editorconfig" />
 	</ItemGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\Vnr.Storage.Security\Vnr.Storage.Security.csproj" />
+	</ItemGroup>
 </Project>

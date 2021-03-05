@@ -39,7 +39,7 @@ namespace Vnr.Storage.Security.Crypto.RijndaelCrypto
             return encryptedData;
         }
 
-        public async static Task<bool> EncryptDataAndSaveToFile(byte[] Data, byte[] Key, byte[] IV, string absolutePath)
+        public static bool EncryptDataAndSaveToFile(byte[] Data, byte[] Key, byte[] IV, string absolutePath)
         {
             RijndaelHelper.CanPerformEncrypt(Data, Key, IV);
 
@@ -54,13 +54,13 @@ namespace Vnr.Storage.Security.Crypto.RijndaelCrypto
                 ICryptoTransform encryptor = rijAlg.CreateEncryptor(rijAlg.Key, rijAlg.IV);
 
                 // Create the streams used for encryption.
-                using (MemoryStream msEncrypt = new MemoryStream())
+                using (FileStream msEncrypt = File.Create(absolutePath))
                 {
                     using (CryptoStream csEncrypt = new CryptoStream(msEncrypt, encryptor, CryptoStreamMode.Write))
                     {
-                        using (FileStream fStrean = File.Create(absolutePath))
+                        using (BinaryWriter binaryWriter = new BinaryWriter(csEncrypt))
                         {
-                            await fStrean.WriteAsync(Data);
+                            binaryWriter.Write(Data);
                         }
                     }
                 }
