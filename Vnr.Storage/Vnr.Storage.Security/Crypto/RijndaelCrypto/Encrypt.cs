@@ -1,6 +1,6 @@
 ﻿using System.IO;
 using System.Security.Cryptography;
-using Vnr.Storage.Security.Utilities;
+using System.Threading.Tasks;
 
 namespace Vnr.Storage.Security.Crypto.RijndaelCrypto
 {
@@ -39,11 +39,9 @@ namespace Vnr.Storage.Security.Crypto.RijndaelCrypto
             return encryptedData;
         }
 
-        public static byte[] DecryptDataFromBytes(byte[] cipherText, byte[] Key, byte[] IV)
+        public async static Task<bool> EncryptDataAndSaveToFile(byte[] Data, byte[] Key, byte[] IV, string absolutePath)
         {
-            RijndaelHelper.CanPerformDecrypt(cipherText, Key, IV);
-
-            byte[] decryptedData = null;
+            RijndaelHelper.CanPerformEncrypt(Data, Key, IV);
 
             // Create an Rijndael object
             // with the specified key and IV.
@@ -52,24 +50,23 @@ namespace Vnr.Storage.Security.Crypto.RijndaelCrypto
                 rijAlg.Key = Key;
                 rijAlg.IV = IV;
 
-                // Create a decryptor to perform the stream transform.
-                ICryptoTransform decryptor = rijAlg.CreateDecryptor(rijAlg.Key, rijAlg.IV);
+                // Create an encryptor to perform the stream transform.
+                ICryptoTransform encryptor = rijAlg.CreateEncryptor(rijAlg.Key, rijAlg.IV);
 
-                // Create the streams used for decryption.
-                using (MemoryStream msDecrypt = new MemoryStream(cipherText))
+                // Create the streams used for encryption.
+                using (MemoryStream msEncrypt = new MemoryStream())
                 {
-                    using (CryptoStream csDecrypt = new CryptoStream(msDecrypt, decryptor, CryptoStreamMode.Read))
+                    using (CryptoStream csEncrypt = new CryptoStream(msEncrypt, encryptor, CryptoStreamMode.Write))
                     {
-                        using (BinaryReader binaryReader = new BinaryReader(csDecrypt))
+                        using (FileStream fStrean = File.Create(absolutePath))
                         {
-                            //decryptedData = binaryReader.ReadBytes((int)csDecrypt.Length);
-                            decryptedData = binaryReader.ReadAllBytes();
+                            await fStrean.WriteAsync(Data);
                         }
                     }
                 }
             }
 
-            return decryptedData;
+            return true;
         }
     }
 }
