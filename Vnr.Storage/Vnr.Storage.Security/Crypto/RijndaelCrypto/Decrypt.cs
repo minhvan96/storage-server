@@ -38,5 +38,27 @@ namespace Vnr.Storage.Security.Crypto.RijndaelCrypto
 
             return decryptedData;
         }
+
+        public static Stream DecryptDataToStream(byte[] Data, byte[] Key, byte[] IV)
+        {
+            RijndaelHelper.CanPerformDecrypt(Data, Key, IV);
+            using (Rijndael rijAlg = Rijndael.Create())
+            {
+                rijAlg.Key = Key;
+                rijAlg.IV = IV;
+
+                ICryptoTransform decryptor = rijAlg.CreateDecryptor(rijAlg.Key, rijAlg.IV);
+                MemoryStream msDecrypt = new MemoryStream(Data);
+
+                using (CryptoStream csDecrypt = new CryptoStream(msDecrypt, decryptor, CryptoStreamMode.Write))
+                {
+                    using (BinaryWriter binaryWriter = new BinaryWriter(csDecrypt))
+                    {
+                        binaryWriter.Write(Data);
+                    }
+                }
+                return msDecrypt;
+            }
+        }
     }
 }

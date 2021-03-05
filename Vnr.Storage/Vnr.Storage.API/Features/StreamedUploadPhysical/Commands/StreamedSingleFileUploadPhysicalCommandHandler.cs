@@ -14,7 +14,6 @@ using System.Threading.Tasks;
 using Vnr.Storage.API.Configuration;
 using Vnr.Storage.API.Features.BufferedFileUploadPhysical.Helpers;
 using Vnr.Storage.API.Infrastructure.BaseResponse;
-using Vnr.Storage.API.Infrastructure.Crypto.RijndaelCrypto;
 using Vnr.Storage.API.Infrastructure.Data;
 using Vnr.Storage.API.Infrastructure.Data.Entities;
 using Vnr.Storage.API.Infrastructure.Models;

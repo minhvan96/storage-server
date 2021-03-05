@@ -2,7 +2,7 @@
 
 namespace Vnr.Storage.Security.Utilities
 {
-    public static class StreamHelpers
+    public static class StreamUtilities
     {
         private const int BUFFER_SIZE = 4096;
 

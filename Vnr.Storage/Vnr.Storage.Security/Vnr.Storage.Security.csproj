@@ -1,6 +1,14 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>netcoreapp3.1</TargetFramework>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<Folder Include="SecurityHelper\Configuration\" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="system.runtime.caching" Version="5.0.0" />
+	</ItemGroup>
 </Project>
