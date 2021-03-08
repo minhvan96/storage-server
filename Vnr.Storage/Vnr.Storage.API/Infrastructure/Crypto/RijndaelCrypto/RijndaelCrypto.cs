@@ -62,7 +62,6 @@ namespace Vnr.Storage.API.Infrastructure.Crypto.RijndaelCrypto
                     {
                         using (BinaryReader binaryReader = new BinaryReader(csDecrypt))
                         {
-                            //decryptedData = binaryReader.ReadBytes((int)csDecrypt.Length);
                             decryptedData = binaryReader.ReadAllBytes();
                         }
                     }

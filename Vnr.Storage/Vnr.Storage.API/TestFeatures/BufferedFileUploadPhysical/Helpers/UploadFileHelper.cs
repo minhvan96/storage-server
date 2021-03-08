@@ -1,6 +1,5 @@
 ﻿using System.IO;
 using Vnr.Storage.API.Configuration.Contants;
-using Vnr.Storage.API.Infrastructure.Enums;
 
 namespace Vnr.Storage.API.Features.BufferedFileUploadPhysical.Helpers
 {

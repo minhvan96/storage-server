@@ -1,6 +1,6 @@
-﻿using System;
+﻿using Microsoft.Net.Http.Headers;
+using System;
 using System.IO;
-using Microsoft.Net.Http.Headers;
 
 namespace Vnr.Storage.API.Infrastructure.Utilities
 {

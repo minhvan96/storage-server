@@ -1,6 +1,4 @@
-﻿using System.IO;
-
-namespace Vnr.Storage.API.Configuration.Contants
+﻿namespace Vnr.Storage.API.Configuration.Contants
 {
     public static class ArchiveConstants
     {

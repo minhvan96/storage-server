@@ -75,8 +75,6 @@ namespace Vnr.Storage.API
 
             app.UseAuthorization();
 
-            //app.UseMiddleware<MultipartReaderMiddleware>();
-
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
