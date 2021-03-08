@@ -13,7 +13,7 @@ using System.Security.Cryptography;
 using System.Threading;
 using System.Threading.Tasks;
 using Vnr.Storage.API.Configuration;
-using Vnr.Storage.API.Features.BufferedFileUploadPhysical.Helpers;
+using Vnr.Storage.API.Features.UploadPhysical.Helpers;
 using Vnr.Storage.API.Infrastructure.BaseResponse;
 using Vnr.Storage.API.Infrastructure.Data;
 using Vnr.Storage.API.Infrastructure.Enums;
@@ -90,13 +90,10 @@ namespace Vnr.Storage.API.Features.UploadPhysical.Commands
                         {
                             return ResponseProvider.Ok(errorModel);
                         }
+                        var fileNameWithEncryptExtension = UploadFileHelper.GetFileNameWithEncryptExtension(request.File.FileName, request.EncryptAlg);
+                        var uploadFileAbsolutePath = UploadFileHelper.GetUploadAbsolutePath(_contentRootPath, fileNameWithEncryptExtension, request.Archive);
 
-                        var uploadFileAbsolutePath = UploadFileHelper.GetUploadAbsolutePath(_contentRootPath, request.File.FileName, request.Archive);
-                        var finalUploadFileAbsolutePath = uploadFileAbsolutePath + ".vnresource";
-
-                        await UploadFile(streamedFileContent, finalUploadFileAbsolutePath, request.EncryptAlg);
-
-                        //await UploadFilePathToDatabase(request.File.FileName, finalUploadFileRelativePath, finalUploadFileAbsolutePath);
+                        await UploadFile(streamedFileContent, uploadFileAbsolutePath, request.EncryptAlg);
                     }
                 }
 
