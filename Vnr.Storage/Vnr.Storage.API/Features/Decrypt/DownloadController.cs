@@ -13,8 +13,8 @@ namespace Vnr.Storage.API.Features.Decrypt
         {
         }
 
-        [HttpGet("{categoryname}/{filename}")]
-        public Task<IActionResult> Download(GetQuery query)
+        [HttpGet("{CategoryName}/{FileName}")]
+        public Task<IActionResult> Download(GetByFileNameQuery query)
             => HandleRequest(query);
     }
 }
