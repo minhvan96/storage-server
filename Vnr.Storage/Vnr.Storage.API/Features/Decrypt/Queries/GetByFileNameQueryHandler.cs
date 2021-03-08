@@ -8,7 +8,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Vnr.Storage.API.Infrastructure.Data;
 using Vnr.Storage.API.Infrastructure.Models;
-using Vnr.Storage.API.Infrastructure.Utilities.FileHelpers;
 using Vnr.Storage.Security.Crypto.Symmetric;
 
 namespace Vnr.Storage.API.Features.Decrypt.Queries
@@ -33,16 +32,14 @@ namespace Vnr.Storage.API.Features.Decrypt.Queries
             {
                 byte[] data = new BinaryReader(fs).ReadBytes((int)fs.Length);
 
-                var decryptedFileContent = await DecryptFileContent(data);
-
-                response.StreamData = FileHelpers.ByteArrayToMemoryStream(decryptedFileContent);
+                response.StreamData = await DecryptFileContent(data);
                 response.FileName = Path.GetFileNameWithoutExtension(request.FileName);
 
                 return response;
             }
         }
 
-        private async Task<byte[]> DecryptFileContent(byte[] content)
+        private async Task<Stream> DecryptFileContent(byte[] content)
         {
             RijndaelManaged myRijndael = new RijndaelManaged();
 
@@ -50,7 +47,7 @@ namespace Vnr.Storage.API.Features.Decrypt.Queries
             myRijndael.Key = Convert.FromBase64String(rijndaeData.Key);
             myRijndael.IV = Convert.FromBase64String(rijndaeData.IV);
 
-            var decryptedFileContent = SymmetricCrypto.DecryptDataFromBytes(content, myRijndael.Key, myRijndael.IV);
+            var decryptedFileContent = SymmetricCrypto.DecryptDataToStream(content, myRijndael.Key, myRijndael.IV);
             return decryptedFileContent;
         }
     }
