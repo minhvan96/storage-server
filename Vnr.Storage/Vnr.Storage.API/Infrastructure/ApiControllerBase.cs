@@ -17,25 +17,6 @@ namespace Vnr.Storage.API.Infrastructure
         protected ApiControllerBase(IMediator mediator)
             => _mediator = mediator;
 
-        protected async Task<IActionResult> HandleRequest<T>(IRequest<ResponseModel<T>> request)
-        {
-            if (!ModelState.IsValid)
-            {
-                var errorResponse = ResponseProvider.BadRequest(ModelState);
-                return new JsonResult(errorResponse)
-                {
-                    StatusCode = (int)errorResponse.StatusCode
-                };
-            }
-
-            var result = await _mediator.Send(request);
-
-            return new JsonResult(result)
-            {
-                StatusCode = (int)result.StatusCode
-            };
-        }
-
         protected async Task<IActionResult> HandleRequest(IRequest<ResponseModel<FileContentResultModel>> request)
         {
             if (!ModelState.IsValid)
@@ -50,10 +31,8 @@ namespace Vnr.Storage.API.Infrastructure
             var result = await _mediator.Send(request);
             if (result.Successed)
             {
-                return new JsonResult(result)
-                {
-                    StatusCode = (int)result.StatusCode
-                };
+                var contentType = FileHelpers.GetMIMEType(result.Data.FileName);
+                return File(result.Data.StreamData, contentType, result.Data.FileName);
             }
             return new JsonResult(result)
             {
@@ -78,22 +57,6 @@ namespace Vnr.Storage.API.Infrastructure
             {
                 StatusCode = (int)result.StatusCode
             };
-        }
-
-        protected async Task<IActionResult> HandleRequest(IRequest<FileContentResultModel> request)
-        {
-            if (!ModelState.IsValid)
-            {
-                var errorResponse = ResponseProvider.BadRequest(ModelState);
-                return new JsonResult(errorResponse)
-                {
-                    StatusCode = (int)errorResponse.StatusCode
-                };
-            }
-
-            var result = await _mediator.Send(request);
-            var contentType = FileHelpers.GetMIMEType(result.FileName);
-            return File(result.StreamData, contentType, result.FileName);
         }
     }
 }
