@@ -14,6 +14,6 @@ namespace Vnr.Storage.API.Features.UploadPhysical.Commands
         [Required]
         public Archive Archive { get; set; }
 
-        public bool Encrypt { get; set; }
+        public EncryptAlg EncryptAlg { get; set; }
     }
 }

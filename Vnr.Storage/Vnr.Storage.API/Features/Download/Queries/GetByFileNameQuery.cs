@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using Vnr.Storage.API.Infrastructure.Models;
 
-namespace Vnr.Storage.API.Features.Decrypt.Queries
+namespace Vnr.Storage.API.Features.Download.Queries
 {
     public class GetByFileNameQuery : IRequest<FileContentResultModel>
     {

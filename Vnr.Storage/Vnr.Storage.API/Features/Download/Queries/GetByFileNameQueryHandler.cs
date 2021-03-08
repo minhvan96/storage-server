@@ -10,7 +10,7 @@ using Vnr.Storage.API.Infrastructure.Data;
 using Vnr.Storage.API.Infrastructure.Models;
 using Vnr.Storage.Security.Crypto.Symmetric;
 
-namespace Vnr.Storage.API.Features.Decrypt.Queries
+namespace Vnr.Storage.API.Features.Download.Queries
 {
     public class GetByFileNameQueryHandler : IRequestHandler<GetByFileNameQuery, FileContentResultModel>
     {
