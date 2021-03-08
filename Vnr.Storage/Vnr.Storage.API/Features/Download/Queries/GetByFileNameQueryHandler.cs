@@ -40,10 +40,32 @@ namespace Vnr.Storage.API.Features.Download.Queries
             {
                 byte[] data = new BinaryReader(fs).ReadBytes((int)fs.Length);
 
-                response.StreamData = await DecryptFileContent(data, fileExtension);
+                response.StreamData = await DecryptFile(data, fileExtension);
                 response.FileName = Path.GetFileNameWithoutExtension(request.FileName);
 
                 return response;
+            }
+        }
+
+        public async Task<Stream> DecryptFile(byte[] content, string fileExtension)
+        {
+            if (fileExtension == FileConstants.AesExtension)
+            {
+                var aesKey = await _context.AesKeys.FirstOrDefaultAsync();
+
+                var decryptedFileContent = SymmetricCrypto.DecryptDataToStream(content, aesKey.Key, aesKey.IV, CryptoAlgorithm.Aes);
+                return decryptedFileContent;
+            }
+            else
+            {
+                RijndaelManaged myRijndael = new RijndaelManaged();
+
+                var rijndaeData = await _context.RijndaelKeys.FirstOrDefaultAsync();
+                myRijndael.Key = Convert.FromBase64String(rijndaeData.Key);
+                myRijndael.IV = Convert.FromBase64String(rijndaeData.IV);
+
+                var decryptedFileContent = SymmetricCrypto.DecryptDataToStream(content, myRijndael.Key, myRijndael.IV);
+                return decryptedFileContent;
             }
         }
 

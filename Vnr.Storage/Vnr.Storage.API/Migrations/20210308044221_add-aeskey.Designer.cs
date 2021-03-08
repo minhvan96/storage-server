@@ -2,15 +2,17 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Vnr.Storage.API.Infrastructure.Data;
 
 namespace Vnr.Storage.API.Migrations
 {
     [DbContext(typeof(StorageContext))]
-    partial class StorageContextModelSnapshot : ModelSnapshot
+    [Migration("20210308044221_add-aeskey")]
+    partial class addaeskey
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -32,14 +34,14 @@ namespace Vnr.Storage.API.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("AesKeys");
+                    b.ToTable("AesKey");
 
                     b.HasData(
                         new
                         {
                             Id = 1L,
-                            IV = new byte[] { 60, 194, 198, 149, 105, 243, 198, 134, 105, 137, 179, 13, 229, 165, 139, 52 },
-                            Key = new byte[] { 28, 117, 42, 194, 1, 117, 71, 68, 139, 169, 0, 154, 31, 28, 204, 29, 82, 77, 122, 1, 117, 73, 234, 115, 68, 255, 108, 46, 85, 111, 150, 165 }
+                            IV = new byte[] { 47, 229, 196, 4, 91, 184, 189, 79, 12, 248, 225, 192, 253, 28, 118, 211 },
+                            Key = new byte[] { 231, 188, 153, 49, 147, 194, 81, 240, 141, 247, 144, 249, 104, 36, 170, 136, 125, 145, 160, 240, 247, 22, 207, 87, 227, 184, 170, 246, 48, 64, 118, 58 }
                         });
                 });
 

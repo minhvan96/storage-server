@@ -16,6 +16,7 @@ namespace Vnr.Storage.API.Infrastructure.Data
             modelBuilder.ApplyConfigurationsFromAssembly(typeof(StorageContext).Assembly);
         }
 
+        public DbSet<AesKey> AesKeys { get; set; }
         public DbSet<RijndaelKey> RijndaelKeys { get; set; }
         public DbSet<EncryptedFile> EncryptedFiles { get; set; }
     }

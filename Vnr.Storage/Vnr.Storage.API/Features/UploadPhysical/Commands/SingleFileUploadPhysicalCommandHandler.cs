@@ -9,7 +9,6 @@ using Microsoft.Net.Http.Headers;
 using System;
 using System.Diagnostics;
 using System.Linq;
-using System.Security.Cryptography;
 using System.Threading;
 using System.Threading.Tasks;
 using Vnr.Storage.API.Configuration;
@@ -116,15 +115,18 @@ namespace Vnr.Storage.API.Features.UploadPhysical.Commands
 
         private async Task<bool> EncryptDataToFile(byte[] streamedFileContent, string absolutePath, EncryptAlg encryptAlg)
         {
-            RijndaelManaged myRijndael = new RijndaelManaged();
-            var rijndaeData = await _context.RijndaelKeys.FirstOrDefaultAsync();
-            myRijndael.Key = Convert.FromBase64String(rijndaeData.Key);
-            myRijndael.IV = Convert.FromBase64String(rijndaeData.IV);
-
             if (encryptAlg == EncryptAlg.AES)
-                return SymmetricCrypto.EncryptDataAndSaveToFile(streamedFileContent, myRijndael.Key, myRijndael.IV, absolutePath, CryptoAlgorithm.Aes);
+            {
+                var aesData = await _context.AesKeys.FirstOrDefaultAsync();
+                return SymmetricCrypto.EncryptDataAndSaveToFile(streamedFileContent, aesData.Key, aesData.IV, absolutePath, CryptoAlgorithm.Aes);
+            }
             else
-                return SymmetricCrypto.EncryptDataAndSaveToFile(streamedFileContent, myRijndael.Key, myRijndael.IV, absolutePath);
+            {
+                var rijndaeData = await _context.RijndaelKeys.FirstOrDefaultAsync();
+                byte[] key = Convert.FromBase64String(rijndaeData.Key);
+                byte[] IV = Convert.FromBase64String(rijndaeData.IV);
+                return SymmetricCrypto.EncryptDataAndSaveToFile(streamedFileContent, key, IV, absolutePath);
+            }
         }
     }
 }
