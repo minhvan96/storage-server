@@ -10,6 +10,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using Newtonsoft.Json.Converters;
 using System.IO;
+using Vnr.Storage.API.Configuration.Contants;
 using Vnr.Storage.API.Infrastructure.Data;
 
 namespace Vnr.Storage.API
@@ -65,8 +66,8 @@ namespace Vnr.Storage.API
             app.UseStaticFiles();
             app.UseFileServer(new FileServerOptions
             {
-                FileProvider = new PhysicalFileProvider(Path.Combine(env.ContentRootPath, "Archive")),
-                RequestPath = "/archive",
+                FileProvider = new PhysicalFileProvider(Path.Combine(env.ContentRootPath, ArchiveConstants.PhysicalFileProviderPath)),
+                RequestPath = ArchiveConstants.ArchiveRequestPath,
                 EnableDirectoryBrowsing = true,
             });
 
