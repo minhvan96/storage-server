@@ -25,6 +25,8 @@ namespace Vnr.Storage.API.Features.Download.Queries
 
         public async Task<FileContentResultModel> Handle(GetByFileNameQuery request, CancellationToken cancellationToken)
         {
+            var fileExtension = Path.GetExtension(request.FileName);
+
             var encryptedFileAbsolutePath = Path.Combine(_contentRootPath, "Archive", request.CategoryName, request.FileName);
             var response = new FileContentResultModel();
 
