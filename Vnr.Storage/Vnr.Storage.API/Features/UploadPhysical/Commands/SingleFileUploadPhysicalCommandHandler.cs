@@ -16,7 +16,7 @@ using Vnr.Storage.API.Configuration;
 using Vnr.Storage.API.Features.BufferedFileUploadPhysical.Helpers;
 using Vnr.Storage.API.Infrastructure.BaseResponse;
 using Vnr.Storage.API.Infrastructure.Data;
-using Vnr.Storage.API.Infrastructure.Data.Entities;
+using Vnr.Storage.API.Infrastructure.Enums;
 using Vnr.Storage.API.Infrastructure.Models;
 using Vnr.Storage.API.Infrastructure.Utilities;
 using Vnr.Storage.API.Infrastructure.Utilities.FileHelpers;
@@ -96,9 +96,9 @@ namespace Vnr.Storage.API.Features.UploadPhysical.Commands
                         var finalUploadFileAbsolutePath = uploadFileAbsolutePath + ".vnresource";
                         var finalUploadFileRelativePath = uploadfileRelativePath + ".vnresource";
 
-                        await EncryptDataToFile(streamedFileContent, finalUploadFileAbsolutePath);
+                        await UploadFile(streamedFileContent, finalUploadFileAbsolutePath, request.EncryptAlg);
 
-                        await UploadFilePathToDatabase(request.File.FileName, finalUploadFileRelativePath, finalUploadFileAbsolutePath);
+                        //await UploadFilePathToDatabase(request.File.FileName, finalUploadFileRelativePath, finalUploadFileAbsolutePath);
                     }
                 }
 
@@ -111,26 +111,37 @@ namespace Vnr.Storage.API.Features.UploadPhysical.Commands
             return ResponseProvider.Ok("Upload file successfully");
         }
 
-        private async Task<bool> EncryptDataToFile(byte[] streamedFileContent, string absolutePath)
+        private async Task<bool> UploadFile(byte[] streamedFileContent, string absolutePath, EncryptAlg encryptAlg)
+        {
+            if (encryptAlg == EncryptAlg.None)
+                return await FileHelpers.UploadFile(streamedFileContent, absolutePath);
+            else
+                return await EncryptDataToFile(streamedFileContent, absolutePath, encryptAlg);
+        }
+
+        private async Task<bool> EncryptDataToFile(byte[] streamedFileContent, string absolutePath, EncryptAlg encryptAlg)
         {
             RijndaelManaged myRijndael = new RijndaelManaged();
             var rijndaeData = await _context.RijndaelKeys.FirstOrDefaultAsync();
             myRijndael.Key = Convert.FromBase64String(rijndaeData.Key);
             myRijndael.IV = Convert.FromBase64String(rijndaeData.IV);
 
-            return SymmetricCrypto.EncryptDataAndSaveToFile(streamedFileContent, myRijndael.Key, myRijndael.IV, absolutePath, CryptoAlgorithm.Rijndael);
+            if (encryptAlg == EncryptAlg.AES)
+                return SymmetricCrypto.EncryptDataAndSaveToFile(streamedFileContent, myRijndael.Key, myRijndael.IV, absolutePath, CryptoAlgorithm.Aes);
+            else
+                return SymmetricCrypto.EncryptDataAndSaveToFile(streamedFileContent, myRijndael.Key, myRijndael.IV, absolutePath);
         }
 
-        public async Task UploadFilePathToDatabase(string fileName, string path, string fullPath)
-        {
-            var encryptedFile = new EncryptedFile
-            {
-                FileName = fileName,
-                Path = path,
-                FullPath = fullPath
-            };
-            await _context.AddAsync(encryptedFile);
-            await _context.SaveChangesAsync();
-        }
+        //public async Task UploadFilePathToDatabase(string fileName, string path, string fullPath)
+        //{
+        //    var encryptedFile = new EncryptedFile
+        //    {
+        //        FileName = fileName,
+        //        Path = path,
+        //        FullPath = fullPath
+        //    };
+        //    await _context.AddAsync(encryptedFile);
+        //    await _context.SaveChangesAsync();
+        //}
     }
 }
