@@ -2,6 +2,7 @@ using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
@@ -10,8 +11,6 @@ using Microsoft.OpenApi.Models;
 using Newtonsoft.Json.Converters;
 using System.IO;
 using Vnr.Storage.API.Infrastructure.Data;
-using Microsoft.EntityFrameworkCore;
-using Vnr.Storage.API.Infrastructure.CustomMiddlewares;
 
 namespace Vnr.Storage.API
 {
@@ -75,7 +74,7 @@ namespace Vnr.Storage.API
 
             app.UseAuthorization();
 
-            app.UseMiddleware<MultipartReaderMiddleware>();
+            //app.UseMiddleware<MultipartReaderMiddleware>();
 
             app.UseEndpoints(endpoints =>
             {

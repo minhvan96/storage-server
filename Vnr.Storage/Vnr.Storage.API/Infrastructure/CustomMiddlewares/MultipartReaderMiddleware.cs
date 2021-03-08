@@ -64,6 +64,7 @@ namespace Vnr.Storage.API.Infrastructure.CustomMiddlewares
 
                 section = await reader.ReadNextSectionAsync();
             }
+            await _next(context);
         }
     }
 }

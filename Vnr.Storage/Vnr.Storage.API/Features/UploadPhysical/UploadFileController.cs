@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 using Vnr.Storage.API.Features.UploadPhysical.Commands;
 using Vnr.Storage.API.Infrastructure;
+using Vnr.Storage.API.Infrastructure.Filters;
 
 namespace Vnr.Storage.API.Features.StreamedUploadPhysical
 {
@@ -20,6 +21,7 @@ namespace Vnr.Storage.API.Features.StreamedUploadPhysical
             => HandleRequest(command);
 
         [HttpPost("multiple")]
+        [DisableFormValueModelBinding]
         [RequestFormLimits(MultipartBodyLengthLimit = 104857600)]
         public Task<IActionResult> MultipleFileUploadPhysical(MultipleFileUploadCommand command)
             => HandleRequest(command);
