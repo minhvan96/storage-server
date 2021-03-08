@@ -36,6 +36,31 @@ namespace Vnr.Storage.API.Infrastructure
             };
         }
 
+        protected async Task<IActionResult> HandleRequest(IRequest<ResponseModel<FileContentResultModel>> request)
+        {
+            if (!ModelState.IsValid)
+            {
+                var errorResponse = ResponseProvider.BadRequest(ModelState);
+                return new JsonResult(errorResponse)
+                {
+                    StatusCode = (int)errorResponse.StatusCode
+                };
+            }
+
+            var result = await _mediator.Send(request);
+            if (result.Successed)
+            {
+                return new JsonResult(result)
+                {
+                    StatusCode = (int)result.StatusCode
+                };
+            }
+            return new JsonResult(result)
+            {
+                StatusCode = (int)result.StatusCode
+            };
+        }
+
         protected async Task<IActionResult> HandleRequest(IRequest<ResponseModel> request)
         {
             if (!ModelState.IsValid)

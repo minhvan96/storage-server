@@ -68,17 +68,5 @@ namespace Vnr.Storage.API.Features.Download.Queries
                 return decryptedFileContent;
             }
         }
-
-        private async Task<Stream> DecryptFileContent(byte[] content, string fileExtension)
-        {
-            RijndaelManaged myRijndael = new RijndaelManaged();
-
-            var rijndaeData = await _context.RijndaelKeys.FirstOrDefaultAsync();
-            myRijndael.Key = Convert.FromBase64String(rijndaeData.Key);
-            myRijndael.IV = Convert.FromBase64String(rijndaeData.IV);
-
-            var decryptedFileContent = SymmetricCrypto.DecryptDataToStream(content, myRijndael.Key, myRijndael.IV);
-            return decryptedFileContent;
-        }
     }
 }
