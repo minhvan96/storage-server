@@ -84,7 +84,7 @@ namespace Vnr.Storage.API.Features.UploadPhysical.Commands
                     {
                         var streamedFileContent = await FileHelpers.ProcessStreamedFile(
                             section, contentDisposition, errorModel,
-                            _permittedExtensions, _streamFileLimitSize, Infrastructure.Enums.ValidateExtension.Encrypt);
+                            _permittedExtensions, _streamFileLimitSize, ValidateExtension.Encrypt);
 
                         if (errorModel.Errors.Any())
                         {
@@ -131,17 +131,5 @@ namespace Vnr.Storage.API.Features.UploadPhysical.Commands
             else
                 return SymmetricCrypto.EncryptDataAndSaveToFile(streamedFileContent, myRijndael.Key, myRijndael.IV, absolutePath);
         }
-
-        //public async Task UploadFilePathToDatabase(string fileName, string path, string fullPath)
-        //{
-        //    var encryptedFile = new EncryptedFile
-        //    {
-        //        FileName = fileName,
-        //        Path = path,
-        //        FullPath = fullPath
-        //    };
-        //    await _context.AddAsync(encryptedFile);
-        //    await _context.SaveChangesAsync();
-        //}
     }
 }
