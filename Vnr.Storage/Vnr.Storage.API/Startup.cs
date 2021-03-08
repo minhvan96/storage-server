@@ -7,11 +7,12 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
-using Microsoft.OpenApi.Models;
 using Newtonsoft.Json.Converters;
 using System.IO;
+using Vnr.Storage.API.Configuration;
 using Vnr.Storage.API.Configuration.Contants;
 using Vnr.Storage.API.Infrastructure.Data;
+using Vnr.Storage.API.Infrastructure.Utilities.StartupHelpers;
 
 namespace Vnr.Storage.API
 {
@@ -39,22 +40,25 @@ namespace Vnr.Storage.API
             services.AddDbContext<StorageContext>(options =>
                        options.UseSqlite(
                            Configuration.GetConnectionString("DefaultConnection")));
-            services.AddSwaggerGen(c =>
-            {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "Vnr.Storage.API", Version = "v1" });
-            }).AddSwaggerGenNewtonsoftSupport();
 
             services.AddMediatR(typeof(Startup));
+
+            var storageConfiguration = Configuration.GetSection(nameof(StorageConfiguration)).Get<StorageConfiguration>();
+            services.AddSingleton(storageConfiguration);
+
+            services.AddApiAuthentication(storageConfiguration);
+            services.AddAuthorizationPolicies(storageConfiguration);
+            services.AddSwaggerGen(storageConfiguration);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, StorageConfiguration storageConfiguration)
         {
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
-                app.UseSwagger();
-                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Vnr.Storage.API v1"));
+                //app.UseSwagger();
+                //app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Vnr.Storage.API v1"));
             }
 
             app.UseHttpsRedirection();
@@ -72,7 +76,9 @@ namespace Vnr.Storage.API
             });
 
             app.UseRouting();
+            app.UseSwagger(storageConfiguration);
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
