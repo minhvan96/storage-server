@@ -92,9 +92,7 @@ namespace Vnr.Storage.API.Features.UploadPhysical.Commands
                         }
 
                         var uploadFileAbsolutePath = UploadFileHelper.GetUploadAbsolutePath(_contentRootPath, request.File.FileName, request.Archive);
-                        var uploadfileRelativePath = UploadFileHelper.GetUploadRelativePath(request.File.FileName, request.Archive);
                         var finalUploadFileAbsolutePath = uploadFileAbsolutePath + ".vnresource";
-                        var finalUploadFileRelativePath = uploadfileRelativePath + ".vnresource";
 
                         await UploadFile(streamedFileContent, finalUploadFileAbsolutePath, request.EncryptAlg);
 
