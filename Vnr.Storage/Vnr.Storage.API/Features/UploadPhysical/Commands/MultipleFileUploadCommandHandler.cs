@@ -12,10 +12,11 @@ using System.Security.Cryptography;
 using System.Threading;
 using System.Threading.Tasks;
 using Vnr.Storage.API.Configuration;
-using Vnr.Storage.API.Features.BufferedFileUploadPhysical.Helpers;
+using Vnr.Storage.API.Features.UploadPhysical.Helpers;
 using Vnr.Storage.API.Infrastructure.BaseResponse;
 using Vnr.Storage.API.Infrastructure.Data;
 using Vnr.Storage.API.Infrastructure.Data.Entities;
+using Vnr.Storage.API.Infrastructure.Enums;
 using Vnr.Storage.API.Infrastructure.Models;
 using Vnr.Storage.API.Infrastructure.Utilities;
 using Vnr.Storage.API.Infrastructure.Utilities.FileHelpers;
@@ -81,7 +82,7 @@ namespace Vnr.Storage.API.Features.UploadPhysical.Commands
                     {
                         var streamedFileContent = await FileHelpers.ProcessStreamedFile(
                             section, contentDisposition, errorModel,
-                            _permittedExtensions, _streamFileLimitSize, Infrastructure.Enums.ValidateExtension.Encrypt);
+                            _permittedExtensions, _streamFileLimitSize, ValidateExtension.Encrypt);
 
                         if (errorModel.Errors.Any())
                         {
@@ -89,14 +90,10 @@ namespace Vnr.Storage.API.Features.UploadPhysical.Commands
                         }
                         var fileName = FileHelpers.GetFileName(section.ContentDisposition);
 
-                        var uploadFileAbsolutePath = UploadFileHelper.GetUploadAbsolutePath(_contentRootPath, fileName, request.Archive);
-                        var uploadfileRelativePath = UploadFileHelper.GetUploadRelativePath(fileName, request.Archive);
-                        var finalUploadFileAbsolutePath = uploadFileAbsolutePath + ".vnresource";
-                        var finalUploadFileRelativePath = uploadfileRelativePath + ".vnresource";
+                        var fileNameWithEncryptExtension = UploadFileHelper.GetFileNameWithEncryptExtension(fileName, request.EncryptAlg);
+                        var uploadFileAbsolutePath = UploadFileHelper.GetUploadAbsolutePath(_contentRootPath, fileNameWithEncryptExtension, request.Archive);
 
-                        await EncryptDataToFile(streamedFileContent, finalUploadFileAbsolutePath);
-
-                        await UploadFilePathToDatabase(fileName, finalUploadFileRelativePath, finalUploadFileAbsolutePath);
+                        await UploadFile(streamedFileContent, uploadFileAbsolutePath, request.EncryptAlg);
                     }
                 }
 
@@ -104,6 +101,30 @@ namespace Vnr.Storage.API.Features.UploadPhysical.Commands
             }
 
             return ResponseProvider.Ok("Upload file successfully");
+        }
+
+        private async Task<bool> UploadFile(byte[] streamedFileContent, string absolutePath, EncryptAlg encryptAlg)
+        {
+            if (encryptAlg == EncryptAlg.None)
+                return await FileHelpers.UploadFile(streamedFileContent, absolutePath);
+            else
+                return await EncryptDataToFile(streamedFileContent, absolutePath, encryptAlg);
+        }
+
+        private async Task<bool> EncryptDataToFile(byte[] streamedFileContent, string absolutePath, EncryptAlg encryptAlg)
+        {
+            if (encryptAlg == EncryptAlg.AES)
+            {
+                var aesData = await _context.AesKeys.FirstOrDefaultAsync();
+                return SymmetricCrypto.EncryptDataAndSaveToFile(streamedFileContent, aesData.Key, aesData.IV, absolutePath, CryptoAlgorithm.Aes);
+            }
+            else
+            {
+                var rijndaeData = await _context.RijndaelKeys.FirstOrDefaultAsync();
+                byte[] key = Convert.FromBase64String(rijndaeData.Key);
+                byte[] IV = Convert.FromBase64String(rijndaeData.IV);
+                return SymmetricCrypto.EncryptDataAndSaveToFile(streamedFileContent, key, IV, absolutePath);
+            }
         }
 
         private async Task<bool> EncryptDataToFile(byte[] streamedFileContent, string absolutePath)
