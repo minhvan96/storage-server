@@ -45,7 +45,7 @@ namespace Vnr.Storage.API
 
             var storageConfiguration = Configuration.GetSection(nameof(StorageConfiguration)).Get<StorageConfiguration>();
             services.AddSingleton(storageConfiguration);
-
+            services.AddApiCors(storageConfiguration);
             services.AddApiAuthentication(storageConfiguration);
             services.AddAuthorizationPolicies(storageConfiguration);
             services.AddSwaggerGen(storageConfiguration);
@@ -79,6 +79,7 @@ namespace Vnr.Storage.API
             app.UseSwagger(storageConfiguration);
 
             app.UseAuthentication();
+            app.UseCors();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>

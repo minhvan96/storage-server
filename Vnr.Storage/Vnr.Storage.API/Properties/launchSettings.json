@@ -3,7 +3,7 @@
     "windowsAuthentication": false,
     "anonymousAuthentication": true,
     "iis": {
-      "applicationUrl": "http://vnr-storageserver.local:8080",
+      "applicationUrl": "https://vnr-storage-server.com",
       "sslPort": 0
     },
     "iisExpress": {
