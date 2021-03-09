@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
+using Vnr.Storage.API.Configuration.Contants;
 using Vnr.Storage.API.Features.UploadPhysical.Commands;
 using Vnr.Storage.API.Infrastructure;
 using Vnr.Storage.API.Infrastructure.Filters;
@@ -10,7 +11,7 @@ namespace Vnr.Storage.API.Features.StreamedUploadPhysical
 {
     [Consumes("multipart/form-data")]
     [Route("api/archive/upload")]
-    [Authorize]
+    [Authorize(Policy = AuthorizationConsts.AdministrationPolicy)]
     public class UploadFileController : ApiControllerBase
     {
         public UploadFileController(IMediator mediator) : base(mediator)
