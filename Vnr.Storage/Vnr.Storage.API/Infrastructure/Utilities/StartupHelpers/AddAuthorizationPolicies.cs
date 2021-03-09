@@ -22,7 +22,7 @@ namespace Vnr.Storage.API.Infrastructure.Utilities.StartupHelpers
                 options.AddPolicy("ClientAccess", policy =>
                 {
                     policy.RequireAuthenticatedUser();
-                    policy.RequireClaim("scope", "Vnr-StorageServer");
+                    policy.RequireClaim("scope", "Vnr-StorageServer-API");
                 });
             });
         }

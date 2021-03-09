@@ -2,6 +2,6 @@
 {
     public static class AuthorizationConsts
     {
-        public const string AdministrationPolicy = "RequireStorageServerAdmin";
+        public const string AdministrationPolicy = "RequireHrmAdmin";
     }
 }

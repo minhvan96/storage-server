@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 using Vnr.Storage.API.Features.UploadPhysical.Commands;
@@ -9,6 +10,7 @@ namespace Vnr.Storage.API.Features.StreamedUploadPhysical
 {
     [Consumes("multipart/form-data")]
     [Route("api/archive/upload")]
+    [Authorize]
     public class UploadFileController : ApiControllerBase
     {
         public UploadFileController(IMediator mediator) : base(mediator)

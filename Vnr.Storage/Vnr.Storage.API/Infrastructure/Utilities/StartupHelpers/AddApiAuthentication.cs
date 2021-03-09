@@ -21,7 +21,7 @@ namespace Vnr.Storage.API.Infrastructure.Utilities.StartupHelpers
             .AddJwtBearer(options =>
             {
                 options.BackchannelHttpHandler = storageConfiguration.JwtBackChannelHandler;
-                options.Audience = "Vnr-StorageServer";
+                options.Audience = "Vnr-StorageServer-API";
                 options.Authority = storageConfiguration.IdentityServerBaseUrl;
                 options.RequireHttpsMetadata = storageConfiguration.RequireHttpsMetadata;
 
