@@ -6,7 +6,7 @@ using Vnr.Storage.API.Infrastructure.Enums;
 
 namespace Vnr.Storage.API.Features.UploadPhysical.Commands
 {
-    public class SingleFileUploadPhysicalCommand : IRequest<ResponseModel>
+    public class SingleFileUploadPhysicalCommand : IRequest<ResponseModel<SingleUploadResponse>>
     {
         [Required]
         public IFormFile File { get; set; }
@@ -15,5 +15,10 @@ namespace Vnr.Storage.API.Features.UploadPhysical.Commands
         public Archive Archive { get; set; }
 
         public EncryptAlg EncryptAlg { get; set; }
+    }
+
+    public class SingleUploadResponse
+    {
+        public string Url { get; set; }
     }
 }

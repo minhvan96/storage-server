@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Net.Http.Headers;
 using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -51,6 +53,28 @@ namespace Vnr.Storage.API.Infrastructure.Utilities.FileHelpers
             }
 
             return Array.Empty<byte>();
+        }
+
+        private static IEnumerable<ValidationResult> ValidateStreamFile(MemoryStream memoryStream, ContentDispositionHeaderValue contentDisposition,
+            long sizeLimit, string[] permittedExtensions, ValidateExtension purpose)
+        {
+            if (memoryStream.Length == 0)
+                yield return new ValidationResult("The file is empty", new[] { "File" });
+            else if (memoryStream.Length > sizeLimit)
+            {
+                var megabyteSizeLimit = sizeLimit / 1048576;
+                yield return new ValidationResult($"The file exceeds {megabyteSizeLimit:N1} MB.", new[] { "File" });
+            }
+            else if (purpose == ValidateExtension.Encrypt && !IsValidFileExtensionAndSignature(
+                        contentDisposition.FileName.Value, memoryStream,
+                        permittedExtensions))
+                yield return new ValidationResult("The file type isn't permitted or the file's " +
+                            "signature doesn't match the file's extension.", new[] { "File" });
+            else if (purpose == ValidateExtension.Decrypt && !IsValidFileExtensionForDecrypt(
+                        contentDisposition.FileName.Value, memoryStream,
+                        permittedExtensions))
+                yield return new ValidationResult("The file type isn't permitted or the file's " +
+                            "signature doesn't match the file's extension.", new[] { "File" });
         }
 
         private static bool IsValidFileExtensionForDecrypt(string fileName, Stream data, string[] permittedDecryptExtension)

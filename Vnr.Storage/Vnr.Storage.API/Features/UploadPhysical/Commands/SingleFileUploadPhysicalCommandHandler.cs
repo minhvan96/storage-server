@@ -7,7 +7,10 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Net.Http.Headers;
 using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -23,7 +26,7 @@ using Vnr.Storage.Security.Crypto.Symmetric;
 
 namespace Vnr.Storage.API.Features.UploadPhysical.Commands
 {
-    public class SingleFileUploadPhysicalCommandHandler : IRequestHandler<SingleFileUploadPhysicalCommand, ResponseModel>
+    public class SingleFileUploadPhysicalCommandHandler : IRequestHandler<SingleFileUploadPhysicalCommand, ResponseModel<SingleUploadResponse>>
     {
         private readonly IHttpContextAccessor _accessor;
         private readonly long _streamFileLimitSize;
@@ -45,19 +48,18 @@ namespace Vnr.Storage.API.Features.UploadPhysical.Commands
             _context = context;
         }
 
-        public async Task<ResponseModel> Handle(SingleFileUploadPhysicalCommand request, CancellationToken cancellationToken)
+        public async Task<ResponseModel<SingleUploadResponse>> Handle(SingleFileUploadPhysicalCommand request, CancellationToken cancellationToken)
         {
             var swTotalEncrypt = new Stopwatch();
             swTotalEncrypt.Start();
             var errorModel = new FormFileErrorModel();
 
-            if (!MultipartRequestHelper.IsMultipartContentType(_accessor.HttpContext.Request.ContentType))
-            {
-                errorModel.Errors.Add("File",
-                    $"The request couldn't be processed (Error 1).");
+            var multiPartContentTypeValidation = MultiPartContentTypeValidation(_accessor.HttpContext.Request.ContentType)
+                .Select(x => x.ErrorMessage)
+                .ToArray();
+            if (multiPartContentTypeValidation.Any())
+                return ResponseProvider.BadRequest<SingleUploadResponse>(multiPartContentTypeValidation);
 
-                return ResponseProvider.Ok(errorModel);
-            }
             var boundary = MultipartRequestHelper.GetBoundary(
                             MediaTypeHeaderValue.Parse(_accessor.HttpContext.Request.ContentType),
                             _defaultFormOptions.MultipartBoundaryLengthLimit);
@@ -72,13 +74,11 @@ namespace Vnr.Storage.API.Features.UploadPhysical.Commands
 
                 if (hasContentDispositionHeader)
                 {
-                    if (!MultipartRequestHelper
-                        .HasFileContentDisposition(contentDisposition))
-                    {
-                        errorModel.Errors.Add("File", $"The request couldn't be processed (Error 2).");
-
-                        return ResponseProvider.Ok(errorModel);
-                    }
+                    var hasFileContentDispositionValidation = HasFileContentDispositionValidation(contentDisposition)
+                        .Select(x => x.ErrorMessage)
+                        .ToArray();
+                    if (hasFileContentDispositionValidation.Any())
+                        return ResponseProvider.BadRequest<SingleUploadResponse>(hasFileContentDispositionValidation);
                     else
                     {
                         var streamedFileContent = await FileHelpers.ProcessStreamedFile(
@@ -87,7 +87,8 @@ namespace Vnr.Storage.API.Features.UploadPhysical.Commands
 
                         if (errorModel.Errors.Any())
                         {
-                            return ResponseProvider.Ok(errorModel);
+                            //return ResponseProvider.BadRequest<SingleUploadResponse>(errorModel.Errors);
+                            return ResponseProvider.Ok(new SingleUploadResponse());
                         }
                         var fileNameWithEncryptExtension = UploadFileHelper.GetFileNameWithEncryptExtension(request.File.FileName, request.EncryptAlg);
                         var uploadFileAbsolutePath = UploadFileHelper.GetUploadAbsolutePath(_contentRootPath, fileNameWithEncryptExtension, request.Archive);
@@ -99,11 +100,32 @@ namespace Vnr.Storage.API.Features.UploadPhysical.Commands
                 section = await reader.ReadNextSectionAsync(cancellationToken);
             }
             swTotalEncrypt.Stop();
+
+            var requestScheme = _accessor.HttpContext.Request.Scheme;
+            var domain = _accessor.HttpContext.Request.Host.Value;
+            var url = Path.Combine(requestScheme, domain, "Archive", request.Archive.ToString(), request.File.FileName);
+
             Console.Write($"File length: {request.File.Length / 1024f / 1024f} MB");
             Console.WriteLine($"Encrypt time: {swTotalEncrypt.ElapsedMilliseconds}");
 
-            return ResponseProvider.Ok("Upload file successfully");
+            return ResponseProvider.Ok(new SingleUploadResponse { Url = url });
         }
+
+        #region Validation
+
+        private static IEnumerable<ValidationResult> MultiPartContentTypeValidation(string contentType)
+        {
+            if (!MultipartRequestHelper.IsMultipartContentType(contentType))
+                yield return new ValidationResult($"The request couldn't be processed (Error 2).", new[] { "File" });
+        }
+
+        private static IEnumerable<ValidationResult> HasFileContentDispositionValidation(ContentDispositionHeaderValue contentDisposition)
+        {
+            if (!MultipartRequestHelper.HasFileContentDisposition(contentDisposition))
+                yield return new ValidationResult($"The request couldn't be processed (Error 2).", new[] { "File" });
+        }
+
+        #endregion Validation
 
         private async Task<bool> UploadFile(byte[] streamedFileContent, string absolutePath, EncryptAlg encryptAlg)
         {

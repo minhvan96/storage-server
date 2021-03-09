@@ -17,6 +17,25 @@ namespace Vnr.Storage.API.Infrastructure
         protected ApiControllerBase(IMediator mediator)
             => _mediator = mediator;
 
+        protected async Task<IActionResult> HandleRequest<T>(IRequest<ResponseModel<T>> request)
+        {
+            if (!ModelState.IsValid)
+            {
+                var errorResponse = ResponseProvider.BadRequest(ModelState);
+                return new JsonResult(errorResponse)
+                {
+                    StatusCode = (int)errorResponse.StatusCode
+                };
+            }
+
+            var result = await _mediator.Send(request);
+
+            return new JsonResult(result)
+            {
+                StatusCode = (int)result.StatusCode
+            };
+        }
+
         protected async Task<IActionResult> HandleRequest(IRequest<ResponseModel<FileContentResultModel>> request)
         {
             if (!ModelState.IsValid)
