@@ -31,7 +31,7 @@ namespace Vnr.Storage.API.Infrastructure.Utilities.StartupHelpers
                     }
                 });
                 options.OperationFilter<AuthorizeCheckOperationFilter>();
-            });
+            }).AddSwaggerGenNewtonsoftSupport();
         }
     }
 }
