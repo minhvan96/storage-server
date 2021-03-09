@@ -7,6 +7,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
+using Microsoft.IdentityModel.Logging;
 using Newtonsoft.Json.Converters;
 using System.IO;
 using Vnr.Storage.API.Configuration;
@@ -28,6 +29,8 @@ namespace Vnr.Storage.API
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            IdentityModelEventSource.ShowPII = true;
+
             services.AddHttpContextAccessor();
             services.AddDirectoryBrowser();
 
@@ -46,6 +49,7 @@ namespace Vnr.Storage.API
             var storageConfiguration = Configuration.GetSection(nameof(StorageConfiguration)).Get<StorageConfiguration>();
             services.AddSingleton(storageConfiguration);
             services.AddApiCors(storageConfiguration);
+
             services.AddApiAuthentication(storageConfiguration);
             services.AddAuthorizationPolicies(storageConfiguration);
             services.AddSwaggerGen(storageConfiguration);
@@ -57,8 +61,7 @@ namespace Vnr.Storage.API
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
-                //app.UseSwagger();
-                //app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Vnr.Storage.API v1"));
+                app.UseSwagger(storageConfiguration);
             }
 
             app.UseHttpsRedirection();
@@ -76,10 +79,9 @@ namespace Vnr.Storage.API
             });
 
             app.UseRouting();
-            app.UseSwagger(storageConfiguration);
 
-            app.UseAuthentication();
             app.UseCors();
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
